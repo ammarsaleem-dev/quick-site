@@ -34,7 +34,7 @@
                         </div>
                         <div class="input-group mb-3">
                             <span class="input-group-text" id="basic-addon2">Customer Phone</span>
-                            <input type="phone" class="form-control" id="phone" placeholder="Enter phone" name="phone" value="{{$customer->phone}}">
+                            <input type="phone" class="form-control" id="phone" placeholder="Enter phone" name="phone" value="{{$customer->name}}">
                             {{-- Error --}}
                             @error('phone')
                             <span class="invalid-feedback" role="alert">
