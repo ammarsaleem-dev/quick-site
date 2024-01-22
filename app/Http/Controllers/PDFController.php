@@ -2,15 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use AbAlsawi\LaravelArabicHtml\ArabicHtml;
 use App\Models\OrdersProducts;
 use App\Models\Route;
-use Barryvdh\DomPDF\Facade\PDF as PDF;
+// use Barryvdh\DomPDF\Facade\PDF as PDF;
+use \PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\DB;
 
 class PDFController extends Controller
 {
@@ -153,7 +151,7 @@ class PDFController extends Controller
                 'order_products' => $d,
             ]);
         }
-        
+
         $pdf = PDF::loadView('layouts.pdf.invoice_report', ['orders' => $data]);
         return $pdf->download('InvoiceReport_' . date('m-d-Y') . '.pdf');
     }
