@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\OrdersProducts;
 use App\Models\Route;
 // use Barryvdh\DomPDF\Facade\PDF as PDF;
-use \PDF;
+use \Barryvdh\DomPDF\PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
