@@ -50,7 +50,8 @@
                             </table>
                         </div>
                         <div class="card-footer d-flex justify-content-between">
-                            <a href="{{ url()->previous() }}" class="btn btn-danger ">Back</a>
+                            {{-- <a href="{{ url('/orders/shipment/create-step1') }}" class="btn btn-danger ">Back</a> --}}
+                            <a href="{{ route('orders-shipment.createStep1') }}" class="btn btn-danger ">Back</a>
                             <button type="button" class="btn btn-secondary save_selected" hidden>Save</button>
                             <button type="submit" class="btn btn-success ">Next</button>
                         </div>
@@ -66,6 +67,7 @@
     <script src="{{ asset('js/my-js/select-all.js') }}"></script>
 
     <script>
+        // Script for selecting user orders.
         var selectedValue = null;
         $('.select_user').on('change', function() {
             selectedValue = $(this).val();

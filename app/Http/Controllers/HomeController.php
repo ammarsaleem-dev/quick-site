@@ -8,6 +8,8 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\Shipment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -31,13 +33,32 @@ class HomeController extends Controller
         $categoryCount = Category::count();
         $productCount = Product::count();
         $customerCount = Customer::count();
-        $orderCount = Order::count();
+        /**
+         * If user_type = Admin then show all orders.
+         * if user_type = Salesman then shows only orders for today that are waiting.
+         * and belongs the user active.
+         */
+        if (Auth::user()->user_type === "Admin") {
+            $allOrdersCount = Order::where([
+                ['status', '=', 'PENDING'],
+            ])->count();
+        } else {
+            $allOrdersCount = Order::where([
+                [DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d")'), '=', date('Y-m-d')],
+                ['status', '=', 'PENDING'],
+                ['user_id', '=', Auth::user()->id]
+            ])->count();
+        }
+        $orderCount = Order::where([
+            [DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d")'), '=', date('Y-m-d')],
+            ['status', '=', 'PENDING']
+        ])->count();
         $shipmentCount = Shipment::count();
-
         return view('home', [
             'categoryCount' => $categoryCount,
             'productCount' => $productCount,
             'customerCount' => $customerCount,
+            'allOrderCount' => $allOrdersCount,
             'orderCount' => $orderCount,
             'shipmentCount' => $shipmentCount,
         ]);

@@ -32,9 +32,9 @@
                             @enderror
                         </div>
                         <div class="input-group mb-3">
-                            <label for="form-control" class="input-group-text" id="basic-addon2">Category</label>
+                            <label for="form-control" class="input-group-text" id="basic-addon2" >Category</label>
                             <select type="text" class="form-control" id="form-control" name="category_id" autocomplete="off" placeholder="Choose Category" >
-                                <option value="" selected>None</option>
+                                <option  value="" selected>None</option>
                                 @foreach($categories as $category)
                                 <option value="{{$category->id}}">{{$category->name}}</option>
                                 @endforeach

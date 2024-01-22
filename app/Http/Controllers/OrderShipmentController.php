@@ -39,11 +39,11 @@ class OrderShipmentController extends Controller
             // check if the shipper is taken at today date.
             $check = OrderShipment::where(DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d")'), '=', date('Y-m-d'))->where('shipment_id', $request->input('shipment_id'))->first();
             if ($check != null) {
-                return redirect('orders/shipment/create-step1')->with('success', 'This truck is already taken.');
+                return redirect('orders/shipment/create-step1')->with('info', 'This truck is already taken.');
             }
             $route = Route::create();
-            $request->session()->put('shipment_id', $request->input('shipment_id'));
             $request->session()->put('route_id', $route->id);
+            $request->session()->put('shipment_id', $request->input('shipment_id'));
             return redirect('orders/shipment/create-step2');
         }
     }
@@ -62,18 +62,26 @@ class OrderShipmentController extends Controller
         $route = Route::find($route_id);
         $check = OrderShipment::where(DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d")'), '=', date('Y-m-d'))->where('route_id', $route->id)->first();
         if ($check != null) {
+            // next
             return redirect('orders/shipment/delivery');
         } else {
-            return redirect('orders/shipment/create-step2');
+            // show back
+            return redirect('orders/shipment/create-step2')->with('info', 'There is no orders to shipment!');
         }
     }
 
-
     public function delivery()
     {
+        // check of routes that donesn't have an orders.
+        $routes =  Route::withCount('orderShipment')->get();
+        foreach ($routes as $route) {
+            if ($route->order_shipment_count == 0) {
+                $route->delete();
+            }
+        }
         $shipment_id = Session()->get('shipment_id');
         $shipment = Shipment::find($shipment_id);
-        $orders = $shipment->orders;
+        $orders =  $shipment->orders()->whereDate('orders.created_at', date('Y-m-d'))->get();
         $route_id = Session()->get('route_id');
         $route = Route::find($route_id);
         return view('layouts.orders-shipment.delivery', ['route' => $route, 'shipment' => $shipment, 'orders' => $orders]);
@@ -119,7 +127,8 @@ class OrderShipmentController extends Controller
             ->select('orders.id', 'orders.status', 'customers.name as customer_name')
             ->where([
                 ['orders.user_id', $selectedValue],
-                ['orders.status', 'PENDING']
+                ['orders.status', 'PENDING'],
+                [DB::raw('DATE_FORMAT(orders.created_at, "%Y-%m-%d")'), '=', date('Y-m-d')]
             ])->get();
         return $tableData;
     }

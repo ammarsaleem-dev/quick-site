@@ -22,10 +22,10 @@ class Route extends Model
         });
     }
 
-    // public function ordersShimpments()
-    // {
-    //     return $this->hasMany(OrderShipment::class);
-    // }
+    public function orderShipment()
+    {
+        return $this->hasMany(OrderShipment::class,'route_id');
+    }
 
     public function orders()
     {
