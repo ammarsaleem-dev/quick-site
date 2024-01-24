@@ -49,7 +49,8 @@ class OrderController extends Controller
         } else {
             $customers = $user->customers;
         }
-        $products = Product::paginate();
+       // $products = Product::paginate();
+        $products = Product::all();
         $currentValue = 0;
         return view('layouts.orders.create', ['customers' => $customers, 'products' => $products, 'currentValue' => $currentValue]);
     }
