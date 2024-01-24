@@ -53,7 +53,7 @@ class OrderShipmentController extends Controller
     public function createStep2()
     {
         $users = User::all();
-        $orders = Order::paginate();
+        $orders = Order::all();
         return view('layouts.orders-shipment.createStep2', ['orders' => $orders, 'users' => $users]);
     }
     public function StoreStep2(Request $request)
