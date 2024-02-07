@@ -32,25 +32,25 @@
 							</span>
 							@enderror
 						</div>
-
+{{-- 
 						<div class="mb-3 form-check">
 							<input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
 							<label class="form-check-label" for="remember">
 								{{ __('Remember Me') }}
 							</label>
-						</div>
+						</div> --}}
 
 						<div class="d-grid">
 							<button type="submit" class="btn btn-primary">{{ __('Login') }}</button>
 						</div>
 
-						<div class="mt-3 text-center">
+						{{-- <div class="mt-3 text-center">
 							@if (Route::has('password.request'))
 							<a class="btn btn-link" href="{{ route('password.request') }}">
 								{{ __('Forgot Your Password?') }}
 							</a>
 							@endif
-						</div>
+						</div> --}}
 					</form>
 				</div>
 			</div>

@@ -6,19 +6,13 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class DeleteModal extends Component
+class Alert extends Component
 {
-
-    public $itemId;
-    public $itemName;
-
     /**
      * Create a new component instance.
      */
-    public function __construct($itemId, $itemName)
+    public function __construct(public string $variable)
     {
-        $this->itemId = $itemId;
-        $this->itemName = $itemName;
     }
 
     /**
@@ -26,6 +20,6 @@ class DeleteModal extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.delete-modal');
+        return view('components.alert');
     }
 }

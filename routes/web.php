@@ -6,6 +6,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderShipmentController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Reports\ReportController;
 use App\Http\Controllers\ShipmentController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -48,6 +49,19 @@ Route::get('/orders/shipment/delivery', [OrderShipmentController::class, 'delive
 Route::post('/filtered', [OrderShipmentController::class, 'filterTable']);
 Route::post('/save-selected', [OrderShipmentController::class, 'saveSelected']);
 
-/*================================ REPORTS ==============================*/
+/*================================ Route & Invoice ==============================*/
 Route::post('/loading',[PDFController::class,'loadingReport'])->name('pdf.loading');
 Route::post('/invoice',[PDFController::class,'invoiceReport'])->name('pdf.invoice');
+
+
+/*=================== Reports ================*/
+/**
+ * REPORT gifts_by_date
+ */
+Route::get('/report/gifts-by-date',[ReportController::class,'giftsByDate'])->name('giftsByDate');
+Route::post('report/gifts-by-date',[ReportController::class,'exportGiftsByDate'])->name('exportGiftsByDate');
+/**
+ * REPORT sales_by_user
+ */
+Route::get('/report/sales-by-user',[ReportController::class,'salesByUser'])->name('salesByUser');
+Route::post('report/sales-by-user',[ReportController::class,'exportSalesByUser'])->name('exportSalesByUser');

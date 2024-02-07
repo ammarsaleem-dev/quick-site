@@ -81,6 +81,14 @@
                                 </li>
                             @endif --}}
                         @else
+                            {{-- version control --}}
+                            <li class="nav-item">
+                                <a class="nav-link">version 1.0.0</a>
+                            </li>
+                            <li class="nav-item py-2 py-lg-1 col-12 col-lg-auto">
+                                <div class="vr d-none d-lg-flex h-100 mx-lg-2 text-black"></div>
+                                <hr class="d-lg-none my-2 text-white-50">
+                            </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
@@ -122,6 +130,7 @@
             <div class="card-footer">copyright &copy; 2024 </div>
         </div>
     </div>
+    @yield('Scripts')
 </body>
 
 </html>
