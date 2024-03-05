@@ -83,7 +83,7 @@
                             The Orders has <b>( {{ $allOrderCount }} )</b> Record
                         </div>
                         <div class="card-footer text-end">
-                            <a href="{{ route('orders.create') }}" class="btn btn-danger">Add New</a>
+                            <a href="{{ route('orders.selectCustomer') }}" class="btn btn-danger">Add New</a>
                             <a href="{{ route('orders.index') }}" class="btn btn-primary">Browse</a>
 
                         </div>
@@ -107,19 +107,19 @@
                     </div>
                 </div>
             @endif
-            @if (Auth::user()->user_type == "Admin")
-            <div class="col-sm-6 py-2">
-                <div class="card">
-                    <div class="card-header">
-                        Reports
-                    </div>
-                    <div class="card-body d-flex align-content-center flex-wrap">
-                        <a href="#" class="btn btn-primary  m-1 disabled">Delivered Orders</a>
-                        <a href="{{ route('salesByUser') }}" class="btn btn-primary  m-1">Sales By User</a>
-                        <a href="{{ route('giftsByDate') }}" class="btn btn-secondary  m-1">Gifts By Date</a>
+            @if (Auth::user()->user_type == 'Admin')
+                <div class="col-sm-6 py-2">
+                    <div class="card">
+                        <div class="card-header">
+                            Reports
+                        </div>
+                        <div class="card-body d-flex align-content-center flex-wrap">
+                            <a href="{{ route('pendingOrders') }}" class="btn btn-danger  m-1">Pending Orders</a>
+                            <a href="{{ route('salesByUser') }}" class="btn btn-primary  m-1">Sales By User</a>
+                            <a href="{{ route('giftsByDate') }}" class="btn btn-secondary  m-1">Gifts By Date</a>
+                        </div>
                     </div>
                 </div>
-            </div>
             @endif
         </div>
     </div>

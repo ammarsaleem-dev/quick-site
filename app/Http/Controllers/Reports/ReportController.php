@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Reports;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\OrdersProducts;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\Request;
@@ -254,5 +255,77 @@ class ReportController extends Controller
 
         $pdf = PDF::loadView('layouts.pdf.sales-by-user', $data);
         return $pdf->download('LoadingReport_' . date('m-d-Y') . '.pdf');
+    }
+
+    /**
+     * 
+     * 
+     * REPORT pending orders
+     */
+
+    public function pendingOrders()
+    {
+        //
+        $users = User::all();
+        return view('layouts.reports.pending-orders', ['users' => $users]);
+    }
+
+    public function exportPendingOrders(Request $request)
+    {
+
+        // make validation for the inputs.
+        $this->validate(
+            $request,
+            [
+                'user_id' => "required",
+                'start_date' => "date",
+            ],
+            [
+                'user_id' => "The user field is required."
+            ]
+        );
+        // set requests to variables.
+        $DATE_FORMAT = DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d")');
+        $start_date = $request->input('start_date');
+        $user_id = $request->input('user_id');
+        $status = "PENDING";
+
+        // get all orders filtered by start and end date.
+        // $orders = Order::whereBetween($DATE_FORMAT, [$start_date, $end_date])->get();
+        $orders = Order::where($DATE_FORMAT, $start_date)
+            ->where('user_id', $user_id)
+            ->where('status', $status)
+            ->get();
+
+
+
+
+        $data = new Collection();
+        foreach ($orders as $order) {
+            $products = OrdersProducts::where('order_id', '=', $order->id)->get();
+            $d = new Collection();
+            foreach ($products as $product) {
+                $d->push([
+                    // 'product_id' => $product->product_id,
+                    'product_name' => $product->product->name,
+                    'quantity' => $product->quantity,
+                    'price' => $product->price,
+                ]);
+            }
+            $data->push([
+                'id' => $order->id,
+                'user' => Auth::user()->name,
+                'customer_name' => $order->customer->name,
+                'customer_address' => $order->customer->address,
+                'customer_phone' => $order->customer->phone,
+                'today' => date('m-d-Y'),
+                'created_at' => $order->created_at,
+                'shipper' => "Driver",
+                'order_products' => $d,
+            ]);
+        }
+
+        $pdf = PDF::loadView('layouts.pdf.invoice_report', ['orders' => $data]);
+        return $pdf->download('InvoiceReport_' . date('m-d-Y') . '.pdf');
     }
 }

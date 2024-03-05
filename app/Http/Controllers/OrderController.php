@@ -4,20 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\Order;
-use App\Models\OrderProduct;
 use App\Models\OrdersProducts;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
-
-    private function getUser()
-    {
-        return Auth::user();
-    }
-
 
     public function __construct()
     {
@@ -25,7 +19,7 @@ class OrderController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Browse all orders.
      */
     public function index()
     {
@@ -38,115 +32,211 @@ class OrderController extends Controller
         return view('layouts.orders.browse', ['orders' => $orders]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function edit(string $id)
     {
-        $user = Auth::user();
+        $products = Product::all();
+        $ordersProducts = OrdersProducts::where('order_id', $id)->get();
+        $order = Order::find($id);
+        return view('layouts.orders.edit-products', ['products' => $products, 'ordersProducts' => $ordersProducts, 'order' => $order]);
+    }
+
+    public function update(Request $request, Order $order)
+    {
+        $this->validate($request, [
+            'products.*' => 'required'
+        ]);
+
+        $review_products = new Collection();
+
+        foreach ($request->input('products') as $key => $value) {
+            if ($value['quantity'] != "0" && $value['gift'] != "0") {
+                $this->OrderProductFunc($key, $value,  "QUANTITY", $review_products);
+                $this->OrderProductFunc($key, $value,  "GIFT", $review_products);
+            } elseif ($value['quantity'] != "0" && $value['gift'] == "0") {
+                $this->OrderProductFunc($key, $value,  "QUANTITY", $review_products);
+            } elseif ($value['quantity'] == "0" && $value['gift'] != "0") {
+                $this->OrderProductFunc($key, $value,  "GIFT", $review_products);
+            } else {
+            }
+        }
+        $request->session()->put('review_products', $review_products);
+        $request->session()->put('order', $order);
+        return redirect()->route('orders.reviewOrder');
+    }
+
+    public function destroy(string $id)
+    {
+        $order = Order::find($id);
+        $order->delete();
+        return redirect()->route('orders.index', ['order' => $order])->with('success', 'Successfully');
+    }
+
+    /**
+     * First select the customer.
+     */
+    public function selectCustomer()
+    {
+        session()->put('review_products', null);
+        session()->put('order', null);
+        session()->put('customer_id', null);
+
+        $user = $this->getUser();
         if ($user->user_type === "Admin") {
             $customers = Customer::all();
         } else {
             $customers = $user->customers;
         }
-       // $products = Product::paginate();
-        $products = Product::all();
-        $currentValue = 0;
-        return view('layouts.orders.create', ['customers' => $customers, 'products' => $products, 'currentValue' => $currentValue]);
+        return view('layouts.orders.select-customer', ['customers' => $customers]);
+    }
+    /**
+     * Store the selected customer to the session.
+     */
+    public function storeCustomer(Request $request)
+    {
+
+        $this->validate($request, [
+            'customer_id' => 'required|integer'
+        ]);
+        $request->session()->put('customer_id', $request->input('customer_id'));
+        return redirect('orders/select-products');
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Select products
      */
-    public function store(Request $request)
+    public function selectProducts()
     {
-        // return $request->products[1]['gift'];
+
+        $currentValue = 0;
+        $products = Product::all();
+        return view('layouts.orders.select-products', ['products' => $products, 'currentValue' => $currentValue]);
+    }
+
+    /**
+     * Store products to the session.
+     */
+    public function storeProducts(Request $request)
+    {
         $this->validate($request, [
-            'customer_id' => 'required|integer',
             'products.*' => 'required'
         ]);
-        $order = new Order();
-        $order->customer_id = $request->input('customer_id');
-        $order->user_id = Auth::user()->id;
-        $order->status = "PENDING";
-        $order->save();
-        foreach ($request->input('products') as $key => $value) {
 
+        $review_products = new Collection();
+
+        foreach ($request->input('products') as $key => $value) {
             if ($value['quantity'] != "0" && $value['gift'] != "0") {
-                $this->OrderProductFunc($key, $value, $order, "QUANTITY");
-                $this->OrderProductFunc($key, $value, $order, "GIFT");
+                $this->OrderProductFunc($key, $value,  "QUANTITY", $review_products);
+                $this->OrderProductFunc($key, $value,  "GIFT", $review_products);
             } elseif ($value['quantity'] != "0" && $value['gift'] == "0") {
-                $this->OrderProductFunc($key, $value, $order, "QUANTITY");
+                $this->OrderProductFunc($key, $value,  "QUANTITY", $review_products);
             } elseif ($value['quantity'] == "0" && $value['gift'] != "0") {
-                $this->OrderProductFunc($key, $value, $order, "GIFT");
+                $this->OrderProductFunc($key, $value,  "GIFT", $review_products);
             } else {
             }
         }
-        // return redirect()->route('orders.index')->with('success', 'Successfully');
-        return redirect()->route('orders.show', ['order' => $order])->with('success', 'Successfully');
+        $request->session()->put('review_products', $review_products);
+        return redirect()->route('orders.reviewOrder');
     }
 
-    private function OrderProductFunc($key, $value, $order, $type)
+    /**
+     * Review orders products the quantity and prices and grand total of quantity and prices.
+     */
+    public function reviewOrder()
     {
+        $customer_id = session()->get('customer_id');
+        $review_products = session()->get('review_products');
+
+        $total = 0;
+        foreach ($review_products as $product) {
+            $total += $product['product_quantity'];
+        }
+        if ($total <= 0) {
+            return redirect()->route('orders.selectProducts')->with('info', 'There is no products selected.');
+        }
+
+        $customer = Customer::find($customer_id);
+
+        return view('layouts.orders.review-order', ['customer' => $customer, 'review_products' => $review_products]);
+    }
+
+    /**
+     * After reviewed products , submit the order and save it to database.
+     */
+    public function storeReviewedOrder(Request $request)
+    {
+
+        $customer_id = $request->session()->get('customer_id');
+        $products =  $request->session()->get('review_products');
+        $order = $request->session()->get('order');
+        if ($order == null) {
+            $order = new Order();
+            $order->customer_id = $customer_id;
+            $order->user_id = $this->getUser()->id;
+            $order->status = "PENDING";
+            $order->save();
+            foreach ($products as $product) {
+                $o_product = new OrdersProducts();
+                $o_product->product_id = $product['product_id'];
+                $o_product->price = $product['product_price'];
+                $o_product->quantity = $product['product_quantity'];
+                $o_product->order_id = $order->id;
+                $o_product->save();
+            }
+        } else {
+            OrdersProducts::where('order_id', $order->id)->delete();
+            foreach ($products as $product) {
+                $o_product = new OrdersProducts();
+                $o_product->product_id = $product['product_id'];
+                $o_product->price = $product['product_price'];
+                $o_product->quantity = $product['product_quantity'];
+                $o_product->order_id = $order->id;
+                $o_product->save();
+            }
+        }
+
+
+
+        return redirect()->route('orders.index')->with('success', 'Order inserted successfully!');
+    }
+
+
+    // ======================================= private functions =====================================
+
+
+    private function getUser()
+    {
+        return Auth::user();
+    }
+
+
+    private function OrderProductFunc($key, $value, $type, $review_products)
+    {
+        $product = Product::find($key);
         switch ($type) {
             case 'QUANTITY':
-                $orderProduct = new OrdersProducts();
-                $product = Product::find($key);
-                $orderProduct->product_id = $key;
-                $orderProduct->price = $product->price;
-                $orderProduct->quantity = $value['quantity'];
-                $orderProduct->order_id = $order->id; // foreign key
-                $orderProduct->save();
+                $review_products->push(
+                    [
+                        'product_id' => $product->id,
+                        'product_name' => $product->name,
+                        'product_price' => $product->price,
+                        'product_quantity' => $value['quantity']
+                    ]
+                );
                 break;
             case 'GIFT':
-                $orderProduct = new OrdersProducts();
-                $product = Product::find($key);
-                $orderProduct->product_id = $key;
-                $orderProduct->price = 0;
-                $orderProduct->quantity = $value['gift'] ?? 0;
-                $orderProduct->order_id = $order->id; // foreign key
-                $orderProduct->save();
+                $review_products->push(
+                    [
+                        'product_id' => $product->id,
+                        'product_name' => $product->name,
+                        'product_price' => 0,
+                        'product_quantity' => $value['gift'] ?? 0
+                    ]
+                );
                 break;
 
             default:
                 # code...
                 break;
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        $order = Order::find($id);
-        $products = Product::paginate();
-        return view('layouts.orders.show', ['order' => $order, 'products' => $products]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        $order = Order::find($id);
-        $order->delete();
-        return redirect()->route('orders.index', ['order' => $order])->with('success', 'Successfully');
     }
 }

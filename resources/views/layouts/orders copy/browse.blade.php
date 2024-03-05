@@ -5,7 +5,7 @@
         <div class="row">
             @if (isset($orders) && count($orders) >= 1)
                 <div class="row-sm-4 ">
-                    <a href="{{ route('orders.selectCustomer') }}" class="btn btn-danger my-3">Add New</a>                  
+                    <a href="{{ route('orders.create') }}" class="btn btn-danger my-3">Add New</a>                  
                 </div>
 
                 @foreach ($orders as $order)

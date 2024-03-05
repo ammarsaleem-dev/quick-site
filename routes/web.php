@@ -31,14 +31,30 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 // Resources
-Route::resources([
-    'categories' => CategoryController::class,
-    'products' => ProductController::class,
-    'customers' => CustomerController::class,
-    'orders' => OrderController::class,
-    'shipments' => ShipmentController::class,
+Route::resources(
+    [
+        'categories' => CategoryController::class,
+        'products' => ProductController::class,
+        'customers' => CustomerController::class,
+        'shipments' => ShipmentController::class,
+    ]
+);
+
+Route::resource('orders', OrderController::class)->only([
+    'index', 'edit', 'update', 'destroy'
 ]);
+
+
 // Addtional, Routes
+
+/*================================ Orders ==============================*/
+Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+Route::get('orders/select-customer', [OrderController::class, 'selectCustomer'])->name('orders.selectCustomer');
+Route::post('orders/store-customer', [OrderController::class, 'storeCustomer'])->name('orders.storeCustomer');
+Route::get('orders/select-products', [OrderController::class, 'selectProducts'])->name('orders.selectProducts');
+Route::post('orders/store-products', [OrderController::class, 'storeProducts'])->name('orders.storeProducts');
+Route::get('orders/review-order', [OrderController::class, 'reviewOrder'])->name('orders.reviewOrder');
+Route::post('orders/store-reviewed-order', [OrderController::class, 'storeReviewedOrder'])->name('orders.storeReviewedOrder');
 
 /*================================ Orders shipment ==============================*/
 Route::get('orders/shipment/create-step1', [OrderShipmentController::class, 'createStep1'])->name('orders-shipment.createStep1');
@@ -50,18 +66,23 @@ Route::post('/filtered', [OrderShipmentController::class, 'filterTable']);
 Route::post('/save-selected', [OrderShipmentController::class, 'saveSelected']);
 
 /*================================ Route & Invoice ==============================*/
-Route::post('/loading',[PDFController::class,'loadingReport'])->name('pdf.loading');
-Route::post('/invoice',[PDFController::class,'invoiceReport'])->name('pdf.invoice');
+Route::post('/loading', [PDFController::class, 'loadingReport'])->name('pdf.loading');
+Route::post('/invoice', [PDFController::class, 'invoiceReport'])->name('pdf.invoice');
 
 
 /*=================== Reports ================*/
 /**
  * REPORT gifts_by_date
  */
-Route::get('/report/gifts-by-date',[ReportController::class,'giftsByDate'])->name('giftsByDate');
-Route::post('report/gifts-by-date',[ReportController::class,'exportGiftsByDate'])->name('exportGiftsByDate');
+Route::get('/report/gifts-by-date', [ReportController::class, 'giftsByDate'])->name('giftsByDate');
+Route::post('report/gifts-by-date', [ReportController::class, 'exportGiftsByDate'])->name('exportGiftsByDate');
 /**
  * REPORT sales_by_user
  */
-Route::get('/report/sales-by-user',[ReportController::class,'salesByUser'])->name('salesByUser');
-Route::post('report/sales-by-user',[ReportController::class,'exportSalesByUser'])->name('exportSalesByUser');
+Route::get('/report/sales-by-user', [ReportController::class, 'salesByUser'])->name('salesByUser');
+Route::post('report/sales-by-user', [ReportController::class, 'exportSalesByUser'])->name('exportSalesByUser');
+/**
+ * REPORT pending_orders
+ */
+Route::get('/report/pending-orders', [ReportController::class, 'pendingOrders'])->name('pendingOrders');
+Route::post('report/pending-orders', [ReportController::class, 'exportPendingOrders'])->name('exportPendingOrders');
