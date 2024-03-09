@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -35,18 +38,32 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-
+        // return $request;
         $this->validate($request, [
             'name' => 'required|unique:products',
             'description' => 'string|nullable',
             'price' => 'required|numeric',
             'category_id' => 'numeric|nullable',
+            'image' => 'required|image|mimes:jpeg,png|max:2048'
         ]);
+        if ($request->hasFile('image')) {
+            $filenameWithExtension = $request->file('image')->getClientOriginalName();
+            $filename = pathinfo($filenameWithExtension, PATHINFO_FILENAME);
+            $extension = $request->file('image')->getClientOriginalExtension();
+            $filenameStore = $filename . '_' . time() . '.' . $extension;
+            $request->file('image')->storeAs('public/products', $filenameStore);
+            // $request->file('image')->storePubliclyAs('products/', $filenameStore, 's3');
+        } else {
+            $filenameStore = '';
+        }
+
+
         $product = new Product();
         $product->name = $request->input('name');
         $product->description = $request->input('description') ?? "-";
         $product->price = $request->input('price');
         $product->category_id = $request->input('category_id');
+        $product->image = $filenameStore;
         $product->save();
         return redirect()->route('products.index')->with('success', 'Successfully!');
     }
@@ -79,9 +96,25 @@ class ProductController extends Controller
             'price' => 'required|numeric',
             'description' => 'string|nullable',
             'category_id' => 'numeric|nullable',
+            'image' => 'nullable|image|mimes:jpeg,png|max:2048'
         ]);
-
         $product = Product::find($id);
+
+        if ($request->hasFile('image')) {
+            Storage::delete(["public/products/$product->image"]);
+            // Storage::disk('s3')->delete("products/$product->image");
+            $filenameWithExtension = $request->file('image')->getClientOriginalName();
+            $filename = pathinfo($filenameWithExtension, PATHINFO_FILENAME);
+            $extension = $request->file('image')->getClientOriginalExtension();
+            $filenameStore = $filename . '_' . time() . '.' . $extension;
+            $request->file('image')->storeAs('public/products', $filenameStore);
+            // $request->file('image')->storePubliclyAs('products/', $filenameStore, 's3');
+            $product->image = $filenameStore;
+        } else {
+            $filenameStore = '';
+            $product->image = $filenameStore;
+        }
+
         $product->name = $request->input('name');
         $product->description = $request->input('description') ?? "-";
         $product->price = $request->input('price');
@@ -95,8 +128,23 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
+
         $product = Product::find($id);
+        if ($product->image != "") {
+            Storage::delete(["public/products/$product->image"]);
+        }
         $product->delete();
         return redirect()->route('products.index')->with('success', 'Successfully');
+    }
+
+
+    public function deleteImage(Request $request)
+    {
+        $product = Product::find($request->input('product_id'));
+        if ($product->image != "") {
+            Storage::delete(["public/products/$product->image"]);
+            $product->image = "";
+            $product->save();
+        }
     }
 }

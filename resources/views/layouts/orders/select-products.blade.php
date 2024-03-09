@@ -22,16 +22,18 @@
                         </div>
                         <div id="card" class="card-body">
                             @csrf
-
                             <!--=============================== Products =============================-->
                             @foreach ($products as $product)
                                 <div class="card">
                                     <h5 class="card-header"> {{ $product->name }}</h5>
-                                    <div class="card-body">
-                                        <p class="card-text">Price is <b>{{ $product->price }}</b></p>
-                                        <p class="card-text">{{ $product->description }}</p>
-                                        {{-- <p class="card-text">{{ $product->created_at }}</p> --}}
-
+                                    <div class="card-body d-flex justify-content-start">
+                                        <img class="rounded" style="object-fit: contain;border: 1px dashed" width="256"
+                                            height="256"
+                                            src="@if ($product->image != '') {{ asset("storage/products/$product->image") }}" @endif alt="{{ $product->image }}" />
+                                        <div class="col">
+                                            <p class="card-text">Price is <b>{{ $product->price }}</b></p>
+                                            <p class="card-text">{{ $product->description }}</p>
+                                        </div>
                                     </div>
                                     <div class="card-footer ">
                                         <div class="row g-1 align-items-center">
@@ -66,7 +68,7 @@
                         </div>
 
                         <div class="card-footer text-end">
-                           <button type="submit" class="btn btn-primary ">ReviewOrder</button>
+                            <button type="submit" class="btn btn-primary ">ReviewOrder</button>
                         </div>
                     </div> <!-- end of card -->
                 </div>

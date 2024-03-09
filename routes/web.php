@@ -44,6 +44,8 @@ Route::resource('orders', OrderController::class)->only([
     'index', 'edit', 'update', 'destroy'
 ]);
 
+Route::get('/product/delete-image',[ProductController::class,'deleteImage'])->name('deleteImage');
+
 
 // Addtional, Routes
 
