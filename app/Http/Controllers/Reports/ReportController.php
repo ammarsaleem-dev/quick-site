@@ -335,7 +335,7 @@ class ReportController extends Controller
     public function getRouting()
     {
         $shipments = Shipment::all();
-        $routes = Route::orderByDesc('created_at')->get();
+        $routes = Route::orderByDesc('created_at')->paginate(5);
         return view('layouts.reports.get-routing', ['shipments' => $shipments, 'routes' => $routes]);
     }
     public function exportGetRouting(Request $request)
@@ -363,7 +363,7 @@ class ReportController extends Controller
         // return $order_shipment;
         $shipments = Shipment::all();
         if ($order_shipment == null) {
-            return redirect('report/get-routing')->with('warning', 'There is no orders to shipment!');
+            return redirect('report/get-routing')->with('danger', 'Choose the correct date and truck!');
         }
         $routes = Route::where('id', '=', $order_shipment->route_id)->get();
         return view('layouts.reports.get-routing', ['routes' => $routes, 'shipments' => $shipments]);
