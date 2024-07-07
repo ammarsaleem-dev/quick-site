@@ -365,7 +365,7 @@ class ReportController extends Controller
         if ($order_shipment == null) {
             return redirect('report/get-routing')->with('danger', 'Choose the correct date and truck!');
         }
-        $routes = Route::where('id', '=', $order_shipment->route_id)->get();
+        $routes = Route::where('id', '=', $order_shipment->route_id)->paginate(5);
         return view('layouts.reports.get-routing', ['routes' => $routes, 'shipments' => $shipments]);
     }
 }
