@@ -114,8 +114,8 @@
 
                     </table>
                 </div>
-                @if (!$routes)
-                    {{ $routes->links() }}
+                @if ($routes != null)
+                    {{ $routes->links('pagination::bootstrap-4') }}
                 @endif
             </div>
         </div>
