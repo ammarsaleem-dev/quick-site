@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Reports;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\OrderShipment;
 use App\Models\OrdersProducts;
+use App\Models\Route;
+use App\Models\Shipment;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\Request;
@@ -327,5 +330,42 @@ class ReportController extends Controller
 
         $pdf = PDF::loadView('layouts.pdf.invoice_report', ['orders' => $data]);
         return $pdf->download('InvoiceReport_' . date('m-d-Y') . '.pdf');
+    }
+
+    public function getRouting()
+    {
+        $shipments = Shipment::all();
+        $routes = Route::orderByDesc('created_at')->get();
+        return view('layouts.reports.get-routing', ['shipments' => $shipments, 'routes' => $routes]);
+    }
+    public function exportGetRouting(Request $request)
+    {
+
+        // make validation for the inputs.
+        $this->validate(
+            $request,
+            [
+                'shipment_id' => "required",
+                'start_date' => "date",
+            ],
+            [
+                'shipment_id' => "The user field is required."
+            ]
+        );
+        // set requests to variables.
+        $DATE_FORMAT = DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d")');
+        $start_date = $request->input('start_date');
+        $shipment_id = $request->input('shipment_id');
+        // $status = "DELIVERY";
+
+        $order_shipment = OrderShipment::where('shipment_id', $shipment_id)
+            ->where($DATE_FORMAT, date($start_date))->first();
+        // return $order_shipment;
+        $shipments = Shipment::all();
+        if ($order_shipment == null) {
+            return redirect('report/get-routing')->with('warning', 'There is no orders to shipment!');
+        }
+        $routes = Route::where('id', '=', $order_shipment->route_id)->get();
+        return view('layouts.reports.get-routing', ['routes' => $routes, 'shipments' => $shipments]);
     }
 }

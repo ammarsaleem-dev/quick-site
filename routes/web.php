@@ -88,3 +88,8 @@ Route::post('report/sales-by-user', [ReportController::class, 'exportSalesByUser
  */
 Route::get('/report/pending-orders', [ReportController::class, 'pendingOrders'])->name('pendingOrders');
 Route::post('report/pending-orders', [ReportController::class, 'exportPendingOrders'])->name('exportPendingOrders');
+/**
+ * REPORT route
+ */
+Route::get('/report/get-routing', [ReportController::class, 'getRouting'])->name('getRouting');
+Route::post('report/get-routing', [ReportController::class, 'exportGetRouting'])->name('exportGetRouting');

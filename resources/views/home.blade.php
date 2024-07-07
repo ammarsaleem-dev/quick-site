@@ -117,6 +117,7 @@
                             <a href="{{ route('pendingOrders') }}" class="btn btn-danger  m-1">Pending Orders</a>
                             <a href="{{ route('salesByUser') }}" class="btn btn-primary  m-1">Sales By User</a>
                             <a href="{{ route('giftsByDate') }}" class="btn btn-secondary  m-1">Gifts By Date</a>
+                            <a href="{{ route('getRouting') }}" class="btn btn-primary  m-1">Route By Date</a>
                         </div>
                     </div>
                 </div>
