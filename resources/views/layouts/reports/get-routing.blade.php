@@ -114,7 +114,9 @@
 
                     </table>
                 </div>
-                {{ $routes->links('pagination::bootstrap-4') }}
+                @if (!$routes)
+                    {{ $routes->links() }}
+                @endif
             </div>
         </div>
     </div>
