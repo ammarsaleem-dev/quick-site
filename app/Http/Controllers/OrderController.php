@@ -106,9 +106,25 @@ class OrderController extends Controller
      */
     public function selectProducts()
     {
-
+        $user = Auth::user();
         $currentValue = 0;
-        $products = Product::all();
+        switch ($user->user_type) {
+            case 'Admin':
+                $products = Product::all();
+                break;
+
+            case 'Manager':
+                $products = Product::whereIn('user_type_product', ['moderator', 'user'])->get();
+                break;
+
+            default:
+                $products = Product::where(
+                    'user_type_product',
+                    '=',
+                    'user'
+                )->get();
+                break;
+        }
         return view('layouts.orders.select-products', ['products' => $products, 'currentValue' => $currentValue]);
     }
 

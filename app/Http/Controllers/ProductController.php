@@ -44,6 +44,7 @@ class ProductController extends Controller
             'description' => 'string|nullable',
             'price' => 'required|numeric',
             'category_id' => 'numeric|nullable',
+            'user_type_product' => 'string|in:user,admin,moderator',
             'image' => 'required|image|mimes:jpeg,png|max:2048'
         ]);
         if ($request->hasFile('image')) {
@@ -63,6 +64,7 @@ class ProductController extends Controller
         $product->description = $request->input('description') ?? "-";
         $product->price = $request->input('price');
         $product->category_id = $request->input('category_id');
+        $product->user_type_product = $request->input('user_type_product');
         $product->image = $filenameStore;
         $product->save();
         return redirect()->route('products.index')->with('success', 'Successfully!');
@@ -96,6 +98,7 @@ class ProductController extends Controller
             'price' => 'required|numeric',
             'description' => 'string|nullable',
             'category_id' => 'numeric|nullable',
+            'user_type_product' => 'string|in:user,admin,moderator',
             'image' => 'nullable|image|mimes:jpeg,png|max:2048'
         ]);
         $product = Product::find($id);
@@ -118,6 +121,7 @@ class ProductController extends Controller
         $product->name = $request->input('name');
         $product->description = $request->input('description') ?? "-";
         $product->price = $request->input('price');
+        $product->user_type_product = $request->input('user_type_product');
         $product->category_id = $request->input('category_id');
         $product->save();
         return redirect()->route('products.index')->with('success', 'Successfully!');

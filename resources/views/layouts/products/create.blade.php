@@ -53,6 +53,25 @@
                                     </span>
                                 @enderror
                             </div>
+                            {{-- User Type Product --}}
+                            <div class="input-group mb-3">
+                                <label for="form-control" class="input-group-text" id="basic-addon2">User Type
+                                    Product</label>
+                                <select type="text" class="form-control" id="form-control" name="user_type_product"
+                                    autocomplete="off" placeholder="Choose Type">
+                                    <option value="" selected>None</option>
+                                    <option value="user">User</option>
+                                    <option value="moderator">Moderator</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+
+                                {{-- Error --}}
+                                @error('category_id')
+                                    <span class="invalid-feedback" role="alert">
+                                        <p>{{ $message }}</p>
+                                    </span>
+                                @enderror
+                            </div>
                             {{-- Description --}}
                             <div class="input-group mb-3">
                                 <span class="input-group-text" id="basic-addon2">Description</span>

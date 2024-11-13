@@ -58,6 +58,24 @@
                                 @enderror
                             </div>
                             <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon2">User Type</span>
+                                <select type="text" class="form-control" id="form-control" name="user_type_product"
+                                    autocomplete="off" placeholder="How cool is this?" tabindex="-1"
+                                    value="{{ $product->user_type_product }}">
+                                    <option value="" selected>None</option>
+                                    <option @selected($product->user_type_product === 'user') value="user">User</option>
+                                    <option @selected($product->user_type_product === 'moderator') value="moderator">Moderator</option>
+                                    <option @selected($product->user_type_product === 'admin') value="admin">Admin</option>
+                                </select>
+
+                                {{-- Error --}}
+                                @error('category_id')
+                                    <span class="invalid-feedback" role="alert">
+                                        <p>{{ $message }}</p>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="input-group mb-3">
                                 <span class="input-group-text" id="basic-addon2">Description</span>
                                 <textarea class="form-control" placeholder="Descripe this product" id="description" name="description"
                                     style="height: 30px">{{ $product->description }}</textarea>
@@ -77,8 +95,8 @@
                             <div class="img-wrap mb-3" style="border: 1px dotted">
                                 <button type="button" class="btn-close close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
-                                <img id="blah" class="rounded" style="object-fit: contain;"
-                                    width="400" height="256" src="{{ asset('storage/products/' . $product->image) }}"
+                                <img id="blah" class="rounded" style="object-fit: contain;" width="400"
+                                    height="256" src="{{ asset('storage/products/' . $product->image) }}"
                                     alt="@if (isset($product)) {{ $product->image }}@else {{ old('image') }} @endif" />
                             </div>
                             <button type="submit" class="btn btn-primary">Save Changes</button>

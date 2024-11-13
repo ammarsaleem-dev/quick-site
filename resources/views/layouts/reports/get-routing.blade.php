@@ -66,7 +66,7 @@
                         </div>
                     </div>
                 </form> {{-- End of the form --}}
-                <div class="table-responsive">
+                <div>
                     <table class="table table-sm text-center  my-2">
                         <thead>
                             <tr>
@@ -80,7 +80,7 @@
                             @foreach ($routes as $route)
                                 <tr class="text-center">
                                     <td>{{ App\Models\Shipment::find($route->orderShipment[0]->shipment_id)->vehicle }}</td>
-                                    <td><b>{{ $route->route_code }}</b></td>
+                                    <td class="text-break"><b>{{ $route->route_code }}</b></td>
                                     <td>{{ $route->created_at }}</td>
                                     <td> <!-- Example split danger button -->
                                         <div class="btn-group">
