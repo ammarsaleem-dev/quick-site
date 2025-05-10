@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\OrderShipment;
 use App\Models\OrdersProducts;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -69,8 +71,23 @@ class OrderController extends Controller
     public function destroy(string $id)
     {
         $order = Order::find($id);
+        // Delete related order products
+        OrdersProducts::where('order_id', $id)->delete();
+        // Delete related order shipments
+        OrderShipment::where('order_id', $id)->delete();
+
+        // Check if all relations are deleted
+        $hasProducts = OrdersProducts::where('order_id', $id)->exists();
+        $hasShipments = OrderShipment::where('order_id', $id)->exists();
+
+        if (!$hasProducts && !$hasShipments) {
+            // Delete the route if no relations exist
+            DB::table('routes')->where('order_id', $id)->delete();
+        }
+
+        // Then delete the order
         $order->delete();
-        return redirect()->route('orders.index', ['order' => $order])->with('success', 'Successfully');
+        return redirect()->route('orders.index')->with('success', 'Order deleted successfully');
     }
 
     /**

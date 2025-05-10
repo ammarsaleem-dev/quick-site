@@ -79,7 +79,7 @@
                         <tbody>
                             @foreach ($routes as $route)
                                 <tr class="text-center">
-                                    <td>{{ App\Models\Shipment::find($route->orderShipment[0]->shipment_id)->vehicle }}</td>
+                                    <td>{{ $route->orderShipment && count($route->orderShipment) > 0 ? App\Models\Shipment::find($route->orderShipment[0]->shipment_id)->vehicle : 'N/A' }}</td>
                                     <td class="text-break"><b>{{ $route->route_code }}</b></td>
                                     <td>{{ $route->created_at }}</td>
                                     <td> <!-- Example split danger button -->
