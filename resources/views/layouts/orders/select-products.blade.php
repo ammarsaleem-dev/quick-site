@@ -28,7 +28,7 @@
                                 <div class="card mb-3 shadow-sm">
                                     <div class="row g-0">
                                         <div class="col-md-4">
-                                            <img class="img-fluid rounded-start h-100" style="object-fit: cover;"
+                                            <img class="img-fluid rounded-start" style="object-fit: cover; width: 200px; height: 200px;"
                                                 src="@if ($product->image != '') {{ asset("storage/products/$product->image") }} @endif"
                                                 alt="{{ $product->image }}" />
                                         </div>
