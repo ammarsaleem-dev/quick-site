@@ -57,9 +57,13 @@
 
 <body>
     @foreach ($orders as $order)
-        <h1 style="text-align: center">فاتورة مبيعات</h1>
+        <h1 style="text-align: center"> فاتورة مبيعات {{ $order['id'] }}#</h1>
         <table style="width: 100%">
             <tbody>
+                <tr>
+                    <td>{{ $order['shipper'] }} <span>التوصيل:</span></td>
+                    <td>{{ $order['route_code'] }} <span>كود الروت :</span></td>
+                </tr>
                 <tr>
                     <td>{{ $order['created_at'] }} <span>تاريخ الفاتورة:</span></td>
                     <td>{{ $order['customer_name'] }}<span>السيد :</span></td>
@@ -69,7 +73,8 @@
                     <td>{{ $order['customer_address'] }} <span>العنوان :</span></td>
                 </tr>
                 <tr>
-                    <td>{{ $order['shipper'] }} <span>المجهز:</span></td>
+
+                    <td>{{ $order['user2'] }} <span>المندوب:</span></td>
                     <td>{{ $order['customer_phone'] }} <span>رقم الهاتف:</span></td>
                 </tr>
             </tbody>

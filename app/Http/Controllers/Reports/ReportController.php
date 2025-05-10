@@ -62,7 +62,7 @@ class ReportController extends Controller
             return $order->orderProducts->where("price", "=", 0);
         })->collapse();
         /**
-         *  Get all Loading report data. contains 
+         *  Get all Loading report data. contains
          *  Categories , totalGifts
          */
         $groupedProducts = $products->pipe(function ($products) {
@@ -174,7 +174,7 @@ class ReportController extends Controller
             return $order->orderProducts;
         })->collapse();
         /**
-         *  Get all Loading report data. contains 
+         *  Get all Loading report data. contains
          *  Categories , totalQuantities , totalPrices and totalGifts
          */
         $groupedProducts = $products->pipe(function ($products) {
@@ -261,8 +261,8 @@ class ReportController extends Controller
     }
 
     /**
-     * 
-     * 
+     *
+     *
      * REPORT pending orders
      */
 
@@ -317,13 +317,15 @@ class ReportController extends Controller
             }
             $data->push([
                 'id' => $order->id,
+                'route_code' => "",
                 'user' => Auth::user()->name,
+                'user2' => $order->user->name,
                 'customer_name' => $order->customer->name,
                 'customer_address' => $order->customer->address,
                 'customer_phone' => $order->customer->phone,
                 'today' => date('m-d-Y'),
                 'created_at' => $order->created_at,
-                'shipper' => "Driver",
+                'shipper' => "",
                 'order_products' => $d,
             ]);
         }
@@ -331,7 +333,9 @@ class ReportController extends Controller
         $pdf = PDF::loadView('layouts.pdf.invoice_report', ['orders' => $data]);
         return $pdf->download('InvoiceReport_' . date('m-d-Y') . '.pdf');
     }
-
+    /**
+     * REPORT route
+     */
     public function getRouting()
     {
         $shipments = Shipment::all();
@@ -367,5 +371,118 @@ class ReportController extends Controller
         }
         $routes = Route::where('id', '=', $order_shipment->route_id)->paginate(5);
         return view('layouts.reports.get-routing', ['routes' => $routes, 'shipments' => $shipments]);
+    }
+
+    /**
+     * REPORT delivered orders
+     */
+    public function getDeliveredOrders()
+    {
+        $users = User::all();
+        $orders = Order::where('status', 'DELIVERY')->orderByDesc('id')->get();
+        return view('layouts.reports.delivered-orders', ['orders' => $orders, 'users' => $users]);
+    }
+    public function exportDeliveredOrders(Request $request)
+    {
+        // make validation for the inputs.
+        $this->validate(
+            $request,
+            [
+                'user_id' => "required",
+                'start_date' => "date",
+            ],
+            [
+                'user_id' => "The user field is required."
+            ]
+        );
+        // set requests to variables.
+        $DATE_FORMAT = DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d")');
+        $start_date = $request->input('start_date');
+        $user_id = $request->input('user_id');
+        $status = "DELIVERY";
+        $users = User::all();
+        // get all orders filtered by start and end date.
+        // $orders = Order::whereBetween($DATE_FORMAT, [$start_date, $end_date])->get();
+        $orders = Order::where($DATE_FORMAT, $start_date)
+            ->where('user_id', $user_id)
+            ->where('status', $status)
+            ->get();
+        return view('layouts.reports.delivered-orders', ['orders' => $orders, 'users' => $users]);
+    }
+
+    public function getTotalSales()
+    {
+        return view('layouts.reports.total-sales');
+    }
+
+    public function exportTotalSales(Request $request)
+    {
+        // Validate dates
+        $this->validate($request, [
+            'start_date' => "date",
+            'end_date' => "date",
+            'status' => 'required',
+        ]);
+
+        $DATE_FORMAT = DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d")');
+        $start_date = $request->input('start_date');
+        $end_date = $request->input('end_date');
+        $status = $request->input('status', 'DELIVERY');
+
+        // Get all users for sales summary
+        $users = User::all();
+
+        // Get orders within date range
+        $orders = Order::whereBetween($DATE_FORMAT, [$start_date, $end_date])
+            ->when($status !== 'ALL', function($query) use ($status) {
+                return $query->where('status', $status);
+            })
+            ->get();
+
+        // Initialize totals
+        $totalQuantity = 0;
+        $totalGifts = 0;
+        $totalSales = 0;
+        $userSales = [];
+
+        // Calculate totals for each user
+        foreach ($users as $user) {
+            $userOrders = $orders->where('user_id', $user->id);
+            $products = $userOrders->map(function ($order) {
+                return $order->orderProducts;
+            })->collapse();
+
+            $quantity = $products->sum('quantity');
+            $gifts = $products->where('price', 0)->sum('quantity');
+            $sales = $products->sum(function ($item) {
+                return $item->quantity * $item->price;
+            });
+
+            $userSales[] = [
+                'user_name' => $user->name,
+                'order_count' => $userOrders->count(),
+                'quantity' => $quantity,
+                'gifts' => $gifts,
+                'sales' => $sales
+            ];
+
+            $totalQuantity += $quantity;
+            $totalGifts += $gifts;
+            $totalSales += $sales;
+        }
+
+        $data = [
+            'title' => 'إجمالي المبيعات',
+            'today' => date('d-m-Y'),
+            'user' => Auth::user()->name,
+            'userSales' => collect($userSales),
+            'totalQuantity' => $totalQuantity,
+            'totalGifts' => $totalGifts,
+            'totalSales' => $totalSales,
+            'startDate' => $start_date,
+            'endDate' => $end_date
+        ];
+
+        return view('layouts.reports.total-sales', ['data' => $data]);
     }
 }

@@ -32,8 +32,10 @@ class OrderController extends Controller
         return view('layouts.orders.browse', ['orders' => $orders]);
     }
 
-    public function edit(string $id)
+    public function edit(string $id, Request $request)
     {
+        $request->input('customer_id');
+        $request->session()->put('customer_id', $request->input('customer_id'));
         $products = Product::all();
         $ordersProducts = OrdersProducts::where('order_id', $id)->get();
         $order = Order::find($id);

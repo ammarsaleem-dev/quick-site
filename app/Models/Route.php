@@ -18,7 +18,7 @@ class Route extends Model
         parent::boot();
 
         static::creating(function ($route) {
-            $route->route_code = Str::random(40); // Generate a random string of 40 characters
+            $route->route_code = 'RT-' . Str::random(8); // Generate a random string prefixed with RT-
         });
     }
 

@@ -118,6 +118,8 @@
                             <a href="{{ route('salesByUser') }}" class="btn btn-primary  m-1">Sales By User</a>
                             <a href="{{ route('giftsByDate') }}" class="btn btn-secondary  m-1">Gifts By Date</a>
                             <a href="{{ route('getRouting') }}" class="btn btn-primary  m-1">Route By Date</a>
+                            <a href="{{ route('getDeliveredOrders') }}" class="btn btn-secondary  m-1">Delivered Orders</a>
+                            <a href="{{ route('getTotalSales') }}" class="btn btn-secondary  m-1">Total Sales</a>
                         </div>
                     </div>
                 </div>

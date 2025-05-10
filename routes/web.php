@@ -93,3 +93,13 @@ Route::post('report/pending-orders', [ReportController::class, 'exportPendingOrd
  */
 Route::get('/report/get-routing', [ReportController::class, 'getRouting'])->name('getRouting');
 Route::post('report/get-routing', [ReportController::class, 'exportGetRouting'])->name('exportGetRouting');
+/**
+ * REPORT route
+ */
+Route::get('/report/delivered-orders', [ReportController::class, 'getDeliveredOrders'])->name('getDeliveredOrders');
+Route::post('report/delivered-orders', [ReportController::class, 'exportDeliveredOrders'])->name('exportDeliveredOrders');
+/**
+ * REPORT total sales
+ */
+Route::get('/report/total-sales', [ReportController::class, 'getTotalSales'])->name('getTotalSales');
+Route::post('report/total-sales', [ReportController::class, 'exportTotalSales'])->name('exportTotalSales');

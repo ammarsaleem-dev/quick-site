@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\OrdersProducts;
 use App\Models\Route;
+use App\Models\Shipment;
 // use Barryvdh\DomPDF\Facade\PDF as PDF;
 use \PDF;
 use Illuminate\Http\Request;
@@ -27,6 +28,7 @@ class PDFController extends Controller
     {
 
         $route = Route::where('route_code', '=', $request->input('route_code'))->firstOrFail();
+        $vehicle = Shipment::find($route->orderShipment[0]->shipment_id)->vehicle;
         // Get all orders belongs to this route.
         $orders = $route->orders;
         // Get all products belongs to orders above.
@@ -34,7 +36,7 @@ class PDFController extends Controller
             return $order->orderProducts;
         })->collapse();
         /**
-         *  Get all Loading report data. contains 
+         *  Get all Loading report data. contains
          *  Categories , totalQuantities , totalPrices and totalGifts
          */
         $groupedProducts = $products->pipe(function ($products) {
@@ -113,6 +115,8 @@ class PDFController extends Controller
             'totalQuantity' => $groupedProducts['totalQuantity'],
             'totalPrice' => $groupedProducts['totalPrice'],
             'totalGift' => $groupedProducts['totalGift'],
+            'shipper' => $vehicle,
+            'route_code' => $route->route_code,
 
         ];
 
@@ -124,6 +128,7 @@ class PDFController extends Controller
     {
 
         $route = Route::where('route_code', '=', $request->input('route_code'))->firstOrFail();
+        $vehicle = Shipment::find($route->orderShipment[0]->shipment_id)->vehicle;
         // Get all orders belongs to this route.
         $route_orders = $route->orders;
 
@@ -141,13 +146,15 @@ class PDFController extends Controller
             }
             $data->push([
                 'id' => $order->id,
+                'route_code' => $route->route_code,
                 'user' => Auth::user()->name,
+                'user2' => $order->user->name,
                 'customer_name' => $order->customer->name,
                 'customer_address' => $order->customer->address,
                 'customer_phone' => $order->customer->phone,
                 'today' => date('m-d-Y'),
                 'created_at' => $order->created_at,
-                'shipper' => "Driver",
+                'shipper' => $vehicle,
                 'order_products' => $d,
             ]);
         }

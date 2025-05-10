@@ -5,7 +5,7 @@
         <div class="row">
             @if (isset($orders) && count($orders) >= 1)
                 <div class="row-sm-4 ">
-                    <a href="{{ route('orders.selectCustomer') }}" class="btn btn-danger my-3">Add New</a>                  
+                    <a href="{{ route('orders.selectCustomer') }}" class="btn btn-danger my-3">Add New</a>
                 </div>
 
                 @foreach ($orders as $order)
@@ -21,7 +21,7 @@
 
                             </div>
                             <div class="card-footer">
-                                <a href="{{ route('orders.edit', ['order' => $order->id]) }}"
+                                <a href="{{ route('orders.edit', ['order' => $order->id, 'customer_id' => $order->customer->id]) }}"
                                     class="btn btn-secondary">Edit</a>
                                 <!-- Button trigger modal -->
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal"

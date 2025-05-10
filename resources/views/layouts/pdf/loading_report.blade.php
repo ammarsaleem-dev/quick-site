@@ -11,7 +11,8 @@
             font-family: DejaVu Sans, sans-serif;
             direction: rtl;
             font-size: 0.95rem;
-
+            text-align: right;
+            margin: 8px;
         }
 
         .date {
@@ -47,17 +48,28 @@
             background-color: #04aa6d;
             color: white;
         }
-
     </style>
 </head>
 
 <body>
     {{-- <h1 style="direction: rtl">{{ $title }}</h1> --}}
     <h1 style="text-align: center;font-size: 1rem">{{ $title }}</h1>
-    <div>
+    <table style="width: 100%">
+        <tbody>
+            <tr>
+                <td>{{ $shipper }} <span>التوصيل:</span></td>
+                <td>{{ $route_code }} <span>كود الروت :</span></td>
+            </tr>
+            <tr>
+                <td>{{ $today }} <span>التاريخ:</span></td>
+                <td>{{ $user }} <span>اسم المجهز :</span></td>
+            </tr>
+        </tbody>
+    </table>
+    {{-- <div>
         <p style="direction: ltr">Date: {{ $today }}</p>
         <p>اسم المجهز {{ $user }} :</p>
-    </div>
+    </div> --}}
 
     <table id="table">
         <thead>

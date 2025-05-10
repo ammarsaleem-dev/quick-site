@@ -10,6 +10,7 @@
             max-height: calc(100vh - 220px);
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 @endsection
 @section('content')
     <form method="POST" enctype="multipart/form-data" action="{{ route('orders.storeProducts') }}">
@@ -24,43 +25,49 @@
                             @csrf
                             <!--=============================== Products =============================-->
                             @foreach ($products as $product)
-                                <div class="card">
-                                    <h5 class="card-header"> {{ $product->name }}</h5>
-                                    <div class="card-body d-flex justify-content-start">
-                                        <img class="rounded" style="object-fit: contain;border: 1px dashed" width="256"
-                                            height="256"
-                                            src="@if ($product->image != '') {{ asset("storage/products/$product->image") }}" @endif alt="{{ $product->image }}" />
-                                        <div class="col">
-                                            <p class="card-text">Price is <b>{{ $product->price }}</b></p>
-                                            <p class="card-text">{{ $product->description }}</p>
+                                <div class="card mb-3 shadow-sm">
+                                    <div class="row g-0">
+                                        <div class="col-md-4">
+                                            <img class="img-fluid rounded-start h-100" style="object-fit: cover;"
+                                                src="@if ($product->image != '') {{ asset("storage/products/$product->image") }} @endif"
+                                                alt="{{ $product->image }}" />
                                         </div>
-                                    </div>
-                                    <div class="card-footer ">
-                                        <div class="row g-1 align-items-center">
-                                            <!--* INCREMENT --->
-                                            <div class="col-auto">
-                                                <button type="button" class="btn btn-success "
-                                                    onclick="updateValue('{{ $product->id }}','increment')">+</button>
+                                        <div class="col-md-8">
+                                            <div class="card-header bg-transparent border-0">
+                                                <h5 class="card-title mb-0">{{ $product->name }}</h5>
                                             </div>
-                                            <!-- QUANTITY INPUT --->
-                                            <div class="col">
-                                                <input name="products[{{ $product->id }}][quantity]" type="number"
-                                                    id="{{ $product->id }}" class="form-control text-center"
-                                                    value="{{ $currentValue }}">
+                                            <div class="card-body">
+                                                <h6 class="card-subtitle mb-2 text-primary">Price:
+                                                    {{ number_format($product->price, 2) }} - IQD </h6>
+                                                <p class="card-text text-muted">{{ $product->description }}</p>
                                             </div>
-                                            <!--* DECREMENT --->
-                                            <div class="col-auto">
-                                                <button type="button" class="btn btn-danger "
-                                                    onclick="updateValue('{{ $product->id }}','decrement')">-</button>
+                                            <div class="card-footer bg-transparent">
+                                                <div class="row g-2 align-items-center">
+                                                    <div class="col-auto">
+                                                        <button type="button" class="btn btn-outline-success btn-sm"
+                                                            onclick="updateValue('{{ $product->id }}','increment')">
+                                                            <i class="fas fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="col">
+                                                        <input name="products[{{ $product->id }}][quantity]" type="number"
+                                                            id="{{ $product->id }}"
+                                                            class="form-control form-control-sm text-center"
+                                                            value="{{ $currentValue }}" min="0">
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <button type="button" class="btn btn-outline-danger btn-sm"
+                                                            onclick="updateValue('{{ $product->id }}','decrement')">
+                                                            <i class="fas fa-minus"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <input name="products[{{ $product->id }}][gift]" type="number"
+                                                            class="form-control form-control-sm text-center" value="0"
+                                                            placeholder="Gift" min="0">
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <!-- GIFT INPUT --->
-                                            <div class="col-3">
-                                                <input name="products[{{ $product->id }}][gift]" type="number"
-                                                    id="{{ $product->id }}" class="form-control text-center"
-                                                    value="0" placeholder="Gift">
-                                            </div>
-
-
                                         </div>
                                     </div>
                                 </div>
