@@ -2,12 +2,13 @@
 @section('style')
     <style>
         #card {
-            overflow-y: scroll;
+            overflow-y: auto;
             position: relative;
+            height: calc(100vh - 220px);
         }
 
         .card-body {
-            max-height: calc(100vh - 220px);
+            height: 100%;
         }
     </style>
 @endsection

@@ -71,6 +71,7 @@ class OrderController extends Controller
     public function destroy(string $id)
     {
         $order = Order::find($id);
+        $route_id = OrderShipment::where('order_id', $id)->first()->route_id ?? null;
         // Delete related order products
         OrdersProducts::where('order_id', $id)->delete();
         // Delete related order shipments
@@ -80,9 +81,9 @@ class OrderController extends Controller
         $hasProducts = OrdersProducts::where('order_id', $id)->exists();
         $hasShipments = OrderShipment::where('order_id', $id)->exists();
 
-        if (!$hasProducts && !$hasShipments) {
+        if (!$hasProducts && !$hasShipments && $route_id) {
             // Delete the route if no relations exist
-            DB::table('routes')->where('order_id', $id)->delete();
+            DB::table('routes')->where('id', $route_id)->delete();
         }
 
         // Then delete the order
