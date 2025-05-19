@@ -151,7 +151,8 @@ class ReportController extends Controller
             [
                 'user_id' => "required",
                 'start_date' => "date",
-                'end_date' => "date"
+                'end_date' => "date",
+                'status' => 'in:DELIVERY,PENDING,ALL'
             ],
             [
                 'user_id' => "The user field is required."
@@ -162,7 +163,7 @@ class ReportController extends Controller
         $start_date = $request->input('start_date');
         $end_date = $request->input('end_date');
         $user_id = $request->input('user_id');
-        $status = "DELIVERY";
+        $status = $request->input('status');
 
         // get all orders filtered by start and end date.
         // $orders = Order::whereBetween($DATE_FORMAT, [$start_date, $end_date])->get();
@@ -282,6 +283,7 @@ class ReportController extends Controller
             [
                 'user_id' => "required",
                 'start_date' => "date",
+                'status' => 'in:PENDING,DELIVERY,ALL'
             ],
             [
                 'user_id' => "The user field is required."
@@ -291,7 +293,7 @@ class ReportController extends Controller
         $DATE_FORMAT = DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d")');
         $start_date = $request->input('start_date');
         $user_id = $request->input('user_id');
-        $status = "PENDING";
+        $status = $request->input('status');
 
         // get all orders filtered by start and end date.
         // $orders = Order::whereBetween($DATE_FORMAT, [$start_date, $end_date])->get();
@@ -330,7 +332,10 @@ class ReportController extends Controller
             ]);
         }
 
-        $pdf = PDF::loadView('layouts.pdf.invoice_report', ['orders' => $data]);
+        $pdf = PDF::loadView('layouts.pdf.invoice_report', [
+            'orders' => $data,
+            'status' => $status
+        ]);
         return $pdf->download('InvoiceReport_' . date('m-d-Y') . '.pdf');
     }
     /**

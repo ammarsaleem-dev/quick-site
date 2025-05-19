@@ -83,7 +83,7 @@
                         @else
                             {{-- version control --}}
                             <li class="nav-item">
-                                <a class="nav-link">version 1.5.3</a>
+                                <a class="nav-link">version 1.7.8</a>
                             </li>
                             <li class="nav-item py-2 py-lg-1 col-12 col-lg-auto">
                                 <div class="vr d-none d-lg-flex h-100 mx-lg-2 text-black"></div>

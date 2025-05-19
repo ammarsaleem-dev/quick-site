@@ -70,7 +70,9 @@
                     <form action="{{ route('orders.storeReviewedOrder') }}" method="post" enctype="multipart/form-data">
                         <div class="card-footer">
                             @csrf
-                            <button class="btn btn-primary" style="width: 100%">Submit Order</button>
+                            <button type="submit"
+                                onclick="this.disabled=true; this.innerHTML='Processing...'; this.form.submit();"
+                                class="btn btn-primary" style="width: 100%">Submit Order</button>
                         </div>
                     </form>
                 </div> <!-- end of card -->

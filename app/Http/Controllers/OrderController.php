@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderShipment;
@@ -81,10 +82,10 @@ class OrderController extends Controller
         $hasProducts = OrdersProducts::where('order_id', $id)->exists();
         $hasShipments = OrderShipment::where('order_id', $id)->exists();
 
-        if (!$hasProducts && !$hasShipments && $route_id) {
-            // Delete the route if no relations exist
-            DB::table('routes')->where('id', $route_id)->delete();
-        }
+        // if (!$hasProducts && !$hasShipments && $route_id) {
+        //     // Delete the route if no relations exist
+        //     DB::table('routes')->where('id', $route_id)->delete();
+        // }
 
         // Then delete the order
         $order->delete();
@@ -145,7 +146,8 @@ class OrderController extends Controller
                 )->get();
                 break;
         }
-        return view('layouts.orders.select-products', ['products' => $products, 'currentValue' => $currentValue]);
+        $categories = Category::all();
+        return view('layouts.orders.select-products', ['products' => $products, 'currentValue' => $currentValue, 'categories' => $categories]);
     }
 
     /**
@@ -200,39 +202,40 @@ class OrderController extends Controller
      */
     public function storeReviewedOrder(Request $request)
     {
+        try {
 
-        $customer_id = $request->session()->get('customer_id');
-        $products =  $request->session()->get('review_products');
-        $order = $request->session()->get('order');
-        if ($order == null) {
-            $order = new Order();
-            $order->customer_id = $customer_id;
-            $order->user_id = $this->getUser()->id;
-            $order->status = "PENDING";
-            $order->save();
-            foreach ($products as $product) {
-                $o_product = new OrdersProducts();
-                $o_product->product_id = $product['product_id'];
-                $o_product->price = $product['product_price'];
-                $o_product->quantity = $product['product_quantity'];
-                $o_product->order_id = $order->id;
-                $o_product->save();
+            $customer_id = $request->session()->get('customer_id');
+            $products =  $request->session()->get('review_products');
+            $order = $request->session()->get('order');
+            if ($order == null) {
+                $order = new Order();
+                $order->customer_id = $customer_id;
+                $order->user_id = $this->getUser()->id;
+                $order->status = "PENDING";
+                $order->save();
+                foreach ($products as $product) {
+                    $o_product = new OrdersProducts();
+                    $o_product->product_id = $product['product_id'];
+                    $o_product->price = $product['product_price'];
+                    $o_product->quantity = $product['product_quantity'];
+                    $o_product->order_id = $order->id;
+                    $o_product->save();
+                }
+            } else {
+                OrdersProducts::where('order_id', $order->id)->delete();
+                foreach ($products as $product) {
+                    $o_product = new OrdersProducts();
+                    $o_product->product_id = $product['product_id'];
+                    $o_product->price = $product['product_price'];
+                    $o_product->quantity = $product['product_quantity'];
+                    $o_product->order_id = $order->id;
+                    $o_product->save();
+                }
             }
-        } else {
-            OrdersProducts::where('order_id', $order->id)->delete();
-            foreach ($products as $product) {
-                $o_product = new OrdersProducts();
-                $o_product->product_id = $product['product_id'];
-                $o_product->price = $product['product_price'];
-                $o_product->quantity = $product['product_quantity'];
-                $o_product->order_id = $order->id;
-                $o_product->save();
-            }
+            return redirect()->route('orders.index')->with('success', 'Order inserted successfully!');
+        } catch (\Throwable $th) {
+            return redirect()->route('orders.index')->with('error', 'Failed to insert order. ' . $th->getMessage());
         }
-
-
-
-        return redirect()->route('orders.index')->with('success', 'Order inserted successfully!');
     }
 
 

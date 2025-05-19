@@ -33,6 +33,15 @@
                             </div>
                             <x-alert variable="user_id" />
 
+                            <div class="input-group mb-2">
+                                <span class="input-group-text" id="status">Orders Status</span>
+                                <select name="status" id="status" class="form-control">
+                                    <option value="PENDING">Pending</option>
+                                    <option value="DELIVERY">Delivered</option>
+                                    <option value="ALL">All</option>
+                                </select>
+                            </div>
+
                             <div class="row">
                                 <div class="col">
                                     <div class="input-group">

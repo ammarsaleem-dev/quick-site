@@ -29,13 +29,36 @@
                                         </option>
                                     @endforeach
                                 </select>
-
                                 {{-- Error --}}
                                 @error('customer_id')
                                     <span class="invalid-feedback" role="alert">
                                         <p>{{ $message }}</p>
                                     </span>
                                 @enderror
+                            </div>
+                            <div class="input-group mb-3" >
+                                <span class="input-group-text" id="basic-addon3">Address</span>
+                                <input type="text" class="form-control" id="address" disabled>
+                            </div>
+                            <div class="input-group mb-3" >
+                                <span class="input-group-text" id="basic-addon4">Phone</span>
+                                <input type="text" class="form-control" id="phone" disabled>
+
+                                <script>
+                                    document.getElementById('form-control').addEventListener('change', function() {
+                                        let customerId = this.value;
+                                        let customers = @json($customers);
+                                        let customer = customers.find(c => c.id == customerId);
+
+                                        if (customer) {
+                                            document.getElementById('address').value = customer.address || 'No address';
+                                            document.getElementById('phone').value = customer.phone || 'No phone';
+                                        } else {
+                                            document.getElementById('address').value = '';
+                                            document.getElementById('phone').value = '';
+                                        }
+                                    });
+                                </script>
                             </div>
                         </div>
                         <div class="card-footer text-end"><button type="submit" class="btn btn-primary ">Next</button>
