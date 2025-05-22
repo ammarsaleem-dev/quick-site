@@ -21,9 +21,11 @@
                 <table class="table table-bordered table-hover" id="customersTable">
                     <thead class="table-light">
                         <tr>
+                            <th>ID</th>
                             <th>Name</th>
                             <th>Address</th>
                             <th>Phone</th>
+                            <th>User</th>
                             <th>Customer Type</th>
                             <th>Created At</th>
                             <th>Actions</th>
@@ -32,9 +34,11 @@
                     <tbody>
                         @foreach ($customers as $customer)
                             <tr>
+                                <td>{{ $customer->id }}</td>
                                 <td>{{ $customer->name }}</td>
                                 <td>{{ $customer->address }}</td>
                                 <td>{{ $customer->phone }}</td>
+                                <td>{{ $customer->user->name }}</td>
                                 <td>{{ $customer->customer_type }}</td>
                                 <td>{{ $customer->created_at }}</td>
                                 <td>
@@ -62,7 +66,7 @@
             @include('components.no-data')
         @endif
     </div>
-{{--
+    {{--
     @push('scripts')
         <script>
             document.getElementById('searchInput').addEventListener('keyup', function() {
