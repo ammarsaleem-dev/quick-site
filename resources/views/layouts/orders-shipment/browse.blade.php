@@ -8,7 +8,7 @@
              <a href="{{route('orders.create')}}" class="btn btn-danger my-3">Add New</a>
              <a href="{{route('orders-shipments.createStep1')}}" class="btn btn-success my-3">Manage Orders</a>
             </div>
-        
+
         @foreach($orders as $order)
         <div class="col-sm-4 py-1">
             <div class="card">

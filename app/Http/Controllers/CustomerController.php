@@ -18,7 +18,7 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        $customers = Customer::paginate(3);
+        $customers = Customer::orderBy('created_at', 'desc')->paginate(5);
         return view('layouts.customers.browse', ['customers' => $customers]);
     }
 
@@ -38,12 +38,32 @@ class CustomerController extends Controller
         $this->validate($request, [
             'name' => 'required|string',
             'address' => 'required',
-            'phone' => 'nullable|numeric'
+            'phone' => 'nullable|numeric',
+            'customer_type' => 'required|in:RETAIL-CUSTOMER,WHOLESALE-CUSTOMER'
         ]);
         $customer = new Customer();
         $customer->name = $request->input('name');
         $customer->address = $request->input('address');
         $customer->phone = $request->input('phone');
+        $user = Auth::user();
+        if ($user->selling_type == 'WHOLESALE') {
+            switch ($request->input('customer_type')) {
+                case 'RETAIL-CUSTOMER':
+                    $customer->customer_type = 'RETAIL-CUSTOMER';
+                    break;
+                case 'WHOLESALE-CUSTOMER':
+                    $customer->customer_type = 'WHOLESALE-CUSTOMER';
+                    break;
+
+                default:
+                    $customer->customer_type = 'RETAIL-CUSTOMER';
+                    break;
+            }
+        } elseif ($user->user_type == 'Admin' || $user->user_type == 'Manager') {
+            $customer->customer_type = $request->input('customer_type');
+        } else {
+            $customer->customer_type = 'RETAIL-CUSTOMER';
+        }
         $customer->user_id = Auth::user()->id;
         $customer->save();
         return redirect()->route('customers.index')->with('success', 'Successfully!');
@@ -74,12 +94,32 @@ class CustomerController extends Controller
         $this->validate($request, [
             'name' => 'required|string',
             'address' => 'required',
-            'phone' => 'nullable|numeric'
+            'phone' => 'nullable|numeric',
+            'customer_type' => 'required|in:RETAIL-CUSTOMER,WHOLESALE-CUSTOMER'
         ]);
         $customer =  Customer::find($id);
         $customer->name = $request->input('name');
         $customer->address = $request->input('address');
         $customer->phone = $request->input('phone');
+        $user = Auth::user();
+        if ($user->selling_type == 'WHOLESALE') {
+            switch ($request->input('customer_type')) {
+                case 'RETAIL-CUSTOMER':
+                    $customer->customer_type = 'RETAIL-CUSTOMER';
+                    break;
+                case 'WHOLESALE-CUSTOMER':
+                    $customer->customer_type = 'WHOLESALE-CUSTOMER';
+                    break;
+
+                default:
+                    $customer->customer_type = 'RETAIL-CUSTOMER';
+                    break;
+            }
+        } elseif ($user->user_type == 'Admin' || $user->user_type == 'Manager') {
+            $customer->customer_type = $request->input('customer_type');
+        } else {
+            $customer->customer_type = 'RETAIL-CUSTOMER';
+        }
         $customer->user_id = Auth::user()->id;
         $customer->save();
         return redirect()->route('customers.index')->with('success', 'Successfully!');

@@ -35,6 +35,18 @@
                                     </span>
                                 @enderror
                             </div>
+                            {{-- WSPrice --}}
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon2">WSPrice</span>
+                                <input type="text" class="form-control" id="wsprice" placeholder="wsprice" name="wsprice"
+                                    value="" autofocus>
+                                {{-- Error --}}
+                                @error('wsprice')
+                                    <span class="invalid-feedback" role="alert">
+                                        <p>{{ $message }}</p>
+                                    </span>
+                                @enderror
+                            </div>
                             {{-- Category --}}
                             <div class="input-group mb-3">
                                 <label for="form-control" class="input-group-text" id="basic-addon2">Category</label>

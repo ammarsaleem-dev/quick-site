@@ -53,7 +53,8 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'user_type' => ['required', 'in:Admin,Manager,Salesman']
+            'user_type' => ['required', 'in:Admin,Manager,Salesman'],
+            'selling_type' => ['required', 'in:RETAIL,WHOLESALE']
         ]);
     }
 
@@ -70,6 +71,7 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'user_type' => $data['user_type'],
+            'selling_type' => $data['selling_type']
         ]);
     }
 }

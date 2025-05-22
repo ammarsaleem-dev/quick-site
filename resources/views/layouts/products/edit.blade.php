@@ -36,6 +36,17 @@
                                 @enderror
                             </div>
                             <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon2">WSPrice</span>
+                                <input type="text" class="form-control" id="wsprice" placeholder="Enter price"
+                                    name="wsprice" autofocus value="{{ $product->wsprice }}">
+                                {{-- Error --}}
+                                @error('wsprice')
+                                    <span class="invalid-feedback" role="alert">
+                                        <p>{{ $message }}</p>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="input-group mb-3">
                                 <span class="input-group-text" id="basic-addon2">Category</span>
                                 <select type="text" class="form-control" id="form-control" name="category_id"
                                     autocomplete="off" placeholder="How cool is this?" tabindex="-1"

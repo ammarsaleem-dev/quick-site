@@ -46,6 +46,25 @@
                                     @enderror
                                 </div>
                             </div>
+                            <div class="row mb-3">
+                                <label for="selling_type"
+                                    class="col-md-4 col-form-label text-md-end">{{ __('Selling Type') }}</label>
+
+                                <div class="col-md-6">
+                                    <select type="text" class="form-control" id="form-control" name="selling_type"
+                                        autocomplete="off" placeholder="Choose position">
+                                        <option value="" selected>None</option>
+                                        <option value="RETAIL">Retail</option>
+                                        <option value="WHOLESALE">Wholesale</option>
+                                    </select>
+
+                                    @error('user_type')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
 
                             <div class="row mb-3">
                                 <label for="email"

@@ -20,7 +20,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::paginate(3);
+        $products = Product::orderBy('created_at', 'desc')->paginate(8);
         return view('layouts.products.browse', ['products' => $products]);
     }
 
@@ -43,6 +43,7 @@ class ProductController extends Controller
             'name' => 'required|unique:products',
             'description' => 'string|nullable',
             'price' => 'required|numeric',
+            'wsprice' => 'required|numeric',
             'category_id' => 'numeric|nullable',
             'user_type_product' => 'string|in:user,admin,moderator',
             'image' => 'required|image|mimes:jpeg,png|max:2048'
@@ -63,6 +64,7 @@ class ProductController extends Controller
         $product->name = $request->input('name');
         $product->description = $request->input('description') ?? "-";
         $product->price = $request->input('price');
+        $product->wsprice = $request->input('wsprice');
         $product->category_id = $request->input('category_id');
         $product->user_type_product = $request->input('user_type_product');
         $product->image = $filenameStore;
@@ -96,6 +98,7 @@ class ProductController extends Controller
         $this->validate($request, [
             'name' => 'required|unique:products,name,' . $id,
             'price' => 'required|numeric',
+            'wsprice' => 'required|numeric',
             'description' => 'string|nullable',
             'category_id' => 'numeric|nullable',
             'user_type_product' => 'string|in:user,admin,moderator',
@@ -113,14 +116,12 @@ class ProductController extends Controller
             $request->file('image')->storeAs('public/products', $filenameStore);
             // $request->file('image')->storePubliclyAs('products/', $filenameStore, 's3');
             $product->image = $filenameStore;
-        } else {
-            $filenameStore = '';
-            $product->image = $filenameStore;
         }
 
         $product->name = $request->input('name');
         $product->description = $request->input('description') ?? "-";
         $product->price = $request->input('price');
+        $product->wsprice = $request->input('wsprice');
         $product->user_type_product = $request->input('user_type_product');
         $product->category_id = $request->input('category_id');
         $product->save();
