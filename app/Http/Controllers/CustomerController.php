@@ -120,7 +120,6 @@ class CustomerController extends Controller
         } else {
             $customer->customer_type = 'RETAIL-CUSTOMER';
         }
-        $customer->user_id = Auth::user()->id;
         $customer->save();
         return redirect()->route('customers.index')->with('success', 'Successfully!');
     }
