@@ -37,7 +37,7 @@ class OrderController extends Controller
 
     public function edit(string $id, Request $request)
     {
-        $request->input('customer_id');
+        // $request->input('customer_id');
         $request->session()->put('customer_id', $request->input('customer_id'));
         $products = Product::all();
         $ordersProducts = OrdersProducts::where('order_id', $id)->get();
@@ -158,9 +158,7 @@ class OrderController extends Controller
         $this->validate($request, [
             'products.*' => 'required'
         ]);
-
         $review_products = new Collection();
-
         foreach ($request->input('products') as $key => $value) {
             if ($value['quantity'] != "0" && $value['gift'] != "0") {
                 $this->OrderProductFunc($key, $value,  "QUANTITY", $review_products);
@@ -217,7 +215,12 @@ class OrderController extends Controller
                 foreach ($products as $product) {
                     $o_product = new OrdersProducts();
                     $o_product->product_id = $product['product_id'];
-                    $o_product->price = ($customerType == 'WHOLESALE-CUSTOMER') ? Product::find($product['product_id'])->wsprice : $product['product_price'];
+                    // check if price is gift ?!
+                    if ($product['product_price'] == 0) {
+                        $o_product->price = $product['product_price'];
+                    } else {
+                        $o_product->price = ($customerType == 'WHOLESALE-CUSTOMER') ? Product::find($product['product_id'])->wsprice : $product['product_price'];
+                    }
                     $o_product->quantity = $product['product_quantity'];
                     $o_product->order_id = $order->id;
                     $o_product->save();
@@ -227,7 +230,12 @@ class OrderController extends Controller
                 foreach ($products as $product) {
                     $o_product = new OrdersProducts();
                     $o_product->product_id = $product['product_id'];
-                    $o_product->price = ($customerType == 'WHOLESALE-CUSTOMER') ? Product::find($product['product_id'])->wsprice : $product['product_price'];
+                    // check if price is gift ?!
+                    if ($product['product_price'] == 0) {
+                        $o_product->price = $product['product_price'];
+                    } else {
+                        $o_product->price = ($customerType == 'WHOLESALE-CUSTOMER') ? Product::find($product['product_id'])->wsprice : $product['product_price'];
+                    }
                     $o_product->quantity = $product['product_quantity'];
                     $o_product->order_id = $order->id;
                     $o_product->save();
@@ -253,35 +261,32 @@ class OrderController extends Controller
     {
         $customer_id = session()->get('customer_id');
         $customerType = Customer::find($customer_id)->customer_type;
-        try {
-            $product = Product::find($key);
-            switch ($type) {
-                case 'QUANTITY':
-                    $review_products->push(
-                        [
-                            'product_id' => $product->id,
-                            'product_name' => $product->name,
-                            'product_price' => ($customerType == 'WHOLESALE-CUSTOMER') ? $product->wsprice : $product->price,
-                            'product_quantity' => $value['quantity']
-                        ]
-                    );
-                    break;
-                case 'GIFT':
-                    $review_products->push(
-                        [
-                            'product_id' => $product->id,
-                            'product_name' => $product->name,
-                            'product_price' => 0,
-                            'product_quantity' => $value['gift'] ?? 0
-                        ]
-                    );
-                    break;
+        $product = Product::find($key);
+        switch ($type) {
+            case 'QUANTITY':
+                $review_products->push(
+                    [
+                        'product_id' => $product->id,
+                        'product_name' => $product->name,
+                        'product_price' => ($customerType == 'WHOLESALE-CUSTOMER') ? $product->wsprice : $product->price,
+                        'product_quantity' => $value['quantity']
+                    ]
+                );
+                break;
+            case 'GIFT':
+                $review_products->push(
+                    [
+                        'product_id' => $product->id,
+                        'product_name' => $product->name,
+                        'product_price' => 0,
+                        'product_quantity' => $value['gift'] ?? 0
+                    ]
+                );
+                break;
 
-                default:
-                    # code...
-                    break;
-            }
-        } catch (\Throwable $th) {
+            default:
+                # code...
+                break;
         }
     }
 }
