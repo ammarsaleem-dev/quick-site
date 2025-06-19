@@ -131,11 +131,11 @@ class OrderController extends Controller
         $currentValue = 0;
         switch ($user->user_type) {
             case 'Admin':
-                $products = Product::all();
+                $products = Product::orderByDesc('category_id')->get();
                 break;
 
             case 'Manager':
-                $products = Product::whereIn('user_type_product', ['moderator', 'user'])->get();
+                $products = Product::whereIn('user_type_product', ['moderator', 'user'])->orderByDesc('category_id')->get();
                 break;
 
             default:
@@ -143,7 +143,7 @@ class OrderController extends Controller
                     'user_type_product',
                     '=',
                     'user'
-                )->get();
+                )->orderByDesc('category_id')->get();
                 break;
         }
         $categories = Category::all();

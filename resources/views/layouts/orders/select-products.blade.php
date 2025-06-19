@@ -12,10 +12,16 @@
 
         .category-chips {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+            overflow-x: auto;
             gap: 0.5rem;
             padding: 1rem;
             border-bottom: 1px solid #dee2e6;
+            white-space: nowrap; /* Prevent chips from breaking words into new lines */
+        }
+
+        .category-chip {
+            white-space: nowrap; /* Ensure the chip text stays on one line */
         }
 
         .category-chip {
