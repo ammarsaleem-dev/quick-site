@@ -52,7 +52,8 @@
                         <div class="card-footer d-flex justify-content-between">
                             {{-- <a href="{{ url('/orders/shipment/create-step1') }}" class="btn btn-danger ">Back</a> --}}
                             <a href="{{ route('orders-shipment.createStep1') }}" class="btn btn-danger ">Back</a>
-                            <button type="button" class="btn btn-secondary save_selected" hidden>Save</button>
+                            <button type="button" class="btn btn-secondary save_selected" hidden
+                                onclick="this.disabled=true; setTimeout(() => this.disabled=false, 1000);">Save</button>
                             <button type="submit" class="btn btn-success ">Next</button>
                         </div>
                     </div>
@@ -116,7 +117,6 @@
                 }
             });
 
-            ids = [...new Set(ids)];
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
