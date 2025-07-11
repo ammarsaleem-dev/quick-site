@@ -41,10 +41,13 @@ Route::resources(
 );
 
 Route::resource('orders', OrderController::class)->only([
-    'index', 'edit', 'update', 'destroy'
+    'index',
+    'edit',
+    'update',
+    'destroy'
 ]);
 
-Route::get('/product/delete-image',[ProductController::class,'deleteImage'])->name('deleteImage');
+Route::get('/product/delete-image', [ProductController::class, 'deleteImage'])->name('deleteImage');
 
 
 // Addtional, Routes
@@ -71,6 +74,9 @@ Route::post('/save-selected', [OrderShipmentController::class, 'saveSelected']);
 Route::post('/loading', [PDFController::class, 'loadingReport'])->name('pdf.loading');
 Route::post('/invoice', [PDFController::class, 'invoiceReport'])->name('pdf.invoice');
 
+// ==================================== Loading && Invoice v2 ================================
+Route::post('/loading_v2', [PDFController::class, 'loadingReport'])->name('pdf.loading');
+Route::post('/invoice_v2', [PDFController::class, 'invoiceReport'])->name('pdf.invoice');
 
 /*=================== Reports ================*/
 /**

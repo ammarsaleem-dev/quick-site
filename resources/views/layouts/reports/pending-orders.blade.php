@@ -69,7 +69,7 @@
                         </div>
                         <div class="card-footer text-end">
                             <button type="button" class="btn btn-success clear_data">Clear</button>
-                            <button type="submit" class="btn btn-primary">Show result</button>
+                            <button formtarget="__blank" type="submit" class="btn btn-primary">Show result</button>
                         </div>
                     </div>
                 </form> {{-- End of the form --}}

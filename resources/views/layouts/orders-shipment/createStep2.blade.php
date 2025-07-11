@@ -105,14 +105,18 @@
         });
 
         $('.save_selected').on('click', function() {
-            var ids = new Array();
+            var ids = [];
             $(".custom_name").each(function() {
                 if ($(this).is(":checked")) {
                     var idValue = $(this)[0].attributes.id.value;
-
-                    ids.push(parseInt(idValue, 10));
+                    var parsedId = parseInt(idValue, 10);
+                    if (!ids.includes(parsedId)) {
+                        ids.push(parsedId);
+                    }
                 }
             });
+
+            ids = [...new Set(ids)];
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

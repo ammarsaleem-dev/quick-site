@@ -121,8 +121,9 @@ class PDFController extends Controller
 
             ];
 
-            $pdf = PDF::loadView('layouts.pdf.loading_report', $data);
-            return $pdf->download('LoadingReport_' . date('m-d-Y') . '.pdf');
+            return view('layouts.pdf.loading_v2', $data);
+            // $pdf = PDF::loadView('layouts.pdf.loading_report', $data);
+            // return $pdf->download('LoadingReport_' . date('m-d-Y') . '.pdf');
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', 'Failed to generate loading report. ' . $th->getMessage());
         }
@@ -164,8 +165,9 @@ class PDFController extends Controller
                 ]);
             }
 
-            $pdf = PDF::loadView('layouts.pdf.invoice_report', ['orders' => $data]);
-            return $pdf->download('InvoiceReport_' . date('m-d-Y') . '.pdf');
+            return view('layouts.pdf.invoice_v2', ['orders' => $data]);
+            // $pdf = PDF::loadView('layouts.pdf.invoice_report', ['orders' => $data]);
+            // return $pdf->download('InvoiceReport_' . date('m-d-Y') . '.pdf');
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', 'Failed to generate invoice report. ' . $th->getMessage());
         }

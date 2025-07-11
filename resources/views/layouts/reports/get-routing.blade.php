@@ -95,14 +95,14 @@
                                                     action="{{ route('pdf.loading', ['route_code' => $route->route_code]) }}"
                                                     method="POST" enctype="multipart/form-data">
                                                     @csrf
-                                                    <li><button type="submit" class="dropdown-item">Route
+                                                    <li><button formtarget="__blank" type="submit" class="dropdown-item">Route
                                                             Loading</button></li>
                                                 </form>
                                                 <form
                                                     action="{{ route('pdf.invoice', ['route_code' => $route->route_code]) }}"
                                                     method="POST" enctype="multipart/form-data">
                                                     @csrf
-                                                    <li><button type="submit" class="dropdown-item">Route
+                                                    <li><button formtarget="__blank" type="submit" class="dropdown-item">Route
                                                             Invoices</button></li>
                                                 </form>
                                             </ul>

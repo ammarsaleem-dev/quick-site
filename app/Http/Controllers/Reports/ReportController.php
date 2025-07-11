@@ -132,8 +132,9 @@ class ReportController extends Controller
 
         ];
 
-        $pdf = PDF::loadView('layouts.pdf.gifts_by_date', $data);
-        return $pdf->download('LoadingReport_' . date('m-d-Y') . '.pdf');
+        // $pdf = PDF::loadView('layouts.pdf.gifts_by_date', $data);
+        // return $pdf->download('LoadingReport_' . date('m-d-Y') . '.pdf');
+        return view('layouts.pdf.loading_v2', $data);
     }
 
 
@@ -257,8 +258,9 @@ class ReportController extends Controller
 
         ];
 
-        $pdf = PDF::loadView('layouts.pdf.sales-by-user', $data);
-        return $pdf->download('LoadingReport_' . date('m-d-Y') . '.pdf');
+        return view('layouts.pdf.loading_v2', $data);
+        // $pdf = PDF::loadView('layouts.pdf.sales-by-user', $data);
+        // return $pdf->download('LoadingReport_' . date('m-d-Y') . '.pdf');
     }
 
     /**
@@ -332,11 +334,12 @@ class ReportController extends Controller
             ]);
         }
 
-        $pdf = PDF::loadView('layouts.pdf.invoice_report', [
-            'orders' => $data,
-            'status' => $status
-        ]);
-        return $pdf->download('InvoiceReport_' . date('m-d-Y') . '.pdf');
+        return view('layouts.pdf.invoice_v2', ['orders' => $data, 'status' => $status]);
+        // $pdf = PDF::loadView('layouts.pdf.invoice_report', [
+        //     'orders' => $data,
+        //     'status' => $status
+        // ]);
+        // return $pdf->download('InvoiceReport_' . date('m-d-Y') . '.pdf');
     }
     /**
      * REPORT route
@@ -439,7 +442,7 @@ class ReportController extends Controller
 
         // Get orders within date range
         $orders = Order::whereBetween($DATE_FORMAT, [$start_date, $end_date])
-            ->when($status !== 'ALL', function($query) use ($status) {
+            ->when($status !== 'ALL', function ($query) use ($status) {
                 return $query->where('status', $status);
             })
             ->get();
