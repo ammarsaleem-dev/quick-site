@@ -138,7 +138,7 @@
     <div style="border: 1 solid rgb(0, 0, 0);">
         <p> مجموع المبيعات الكلية : {{ $totalQuantity ?? '' }}</p>
         <p> مجموع الهدايا الكلية : {{ $totalGift }}</p>
-        <p></p> مبلغ الروت الكلي : {{ number_format($totalPrice ?? null, 2) }} د.ع </p>
+        <p></p> مبلغ الروت الكلي : {{ number_format($totalPrice ?? null, 0) }} د.ع </p>
     </div>
 </body>
 

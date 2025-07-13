@@ -133,7 +133,7 @@
                     <td><b>المجموع</b></td>
                     <td><b>{{ $total }}</b></td>
                     <td></td>
-                    <td><b>{{ number_format($totalPrice, 2) }}</b></td>
+                    <td><b>{{ number_format($totalPrice, 0) }}</b></td>
                 </tr>
             </tbody>
         </table>
