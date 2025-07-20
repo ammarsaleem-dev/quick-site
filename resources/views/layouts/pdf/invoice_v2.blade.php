@@ -69,12 +69,12 @@
                 margin: 10mm 5mm 10mm 5mm;
             }
 
-            h1,
+            /* h1,
             table,
             div,
             p {
                 page-break-inside: avoid;
-            }
+            } */
         }
     </style>
 </head>
