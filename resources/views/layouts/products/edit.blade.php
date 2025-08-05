@@ -97,10 +97,23 @@
                                     </span>
                                 @enderror
                             </div>
+                            {{-- CheckBox --}}
+                            <div class="input-group mb-3">
+                                <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                                    <input type="radio" class="btn-check" name="isAvailable" id="btnradio1"
+                                        autocomplete="off" value="1" @checked(old('isAvailable', $product->isAvailable) == '1')>
+                                    <label class="btn btn-outline-primary" for="btnradio1">Available</label>
+
+                                    <input type="radio" class="btn-check" name="isAvailable" id="btnradio2"
+                                        autocomplete="off" value="0" @checked(old('isAvailable', $product->isAvailable) == '0')>
+                                    <label class="btn btn-outline-primary" for="btnradio2">Not Available</label>
+                                </div>
+                            </div>
                             {{-- Image --}}
                             <div class="input-group mb-3">
-                                <input type="file" name="image" class="form-control" id="image" accept="image/*"
-                                    alt="no image" value="{{ $product->image }}" onchange="doSomeChanges(this);" />
+                                <input type="file" name="image" class="form-control" id="image"
+                                    accept="image/*" alt="no image" value="{{ $product->image }}"
+                                    onchange="doSomeChanges(this);" />
                                 <label for="image" class="input-group-text">Upload</label>
                             </div>
                             <div class="img-wrap mb-3" style="border: 1px dotted">

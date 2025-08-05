@@ -39,7 +39,7 @@ class OrderController extends Controller
     {
         // $request->input('customer_id');
         $request->session()->put('customer_id', $request->input('customer_id'));
-        $products = Product::all();
+        $products = Product::where('isAvailable', 1)->get();
         $ordersProducts = OrdersProducts::where('order_id', $id)->get();
         $order = Order::find($id);
         return view('layouts.orders.edit-products', ['products' => $products, 'ordersProducts' => $ordersProducts, 'order' => $order]);
@@ -131,15 +131,15 @@ class OrderController extends Controller
         $currentValue = 0;
         switch ($user->user_type) {
             case 'Admin':
-                $products = Product::orderByDesc('category_id')->get();
+                $products = Product::where('isAvailable', 1)->orderByDesc('category_id')->get();
                 break;
 
             case 'Manager':
-                $products = Product::whereIn('user_type_product', ['moderator', 'user'])->orderByDesc('category_id')->get();
+                $products = Product::where('isAvailable', 1)->whereIn('user_type_product', ['moderator', 'user'])->orderByDesc('category_id')->get();
                 break;
 
             default:
-                $products = Product::where(
+                $products = Product::where('isAvailable', 1)->where(
                     'user_type_product',
                     '=',
                     'user'

@@ -79,10 +79,12 @@
                         <tbody>
                             @foreach ($routes as $route)
                                 <tr class="text-center">
-                                    <td>{{ $route->orderShipment && count($route->orderShipment) > 0 ? App\Models\Shipment::find($route->orderShipment[0]->shipment_id)->vehicle : 'N/A' }}</td>
+                                    <td>{{ $route->orderShipment && count($route->orderShipment) > 0 ? App\Models\Shipment::find($route->orderShipment[0]->shipment_id)->vehicle : 'N/A' }}
+                                    </td>
                                     <td class="text-break"><b>{{ $route->route_code }}</b></td>
                                     <td>{{ $route->created_at }}</td>
                                     <td> <!-- Example split danger button -->
+
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-secondary">Quick Report</button>
                                             <button type="button"
@@ -95,18 +97,28 @@
                                                     action="{{ route('pdf.loading', ['route_code' => $route->route_code]) }}"
                                                     method="POST" enctype="multipart/form-data">
                                                     @csrf
-                                                    <li><button formtarget="__blank" type="submit" class="dropdown-item">Route
+                                                    <li><button formtarget="__blank" type="submit"
+                                                            class="dropdown-item">Route
                                                             Loading</button></li>
                                                 </form>
                                                 <form
                                                     action="{{ route('pdf.invoice', ['route_code' => $route->route_code]) }}"
                                                     method="POST" enctype="multipart/form-data">
                                                     @csrf
-                                                    <li><button formtarget="__blank" type="submit" class="dropdown-item">Route
+                                                    <li><button formtarget="__blank" type="submit"
+                                                            class="dropdown-item">Route
                                                             Invoices</button></li>
                                                 </form>
                                             </ul>
+                                            <form class="px-3" onsubmit="return confirm('Are you sure you want to delete?')"
+                                                action="{{ route('deleteRoute', ['route_code' => $route->route_code]) }}"
+                                                method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger">Delete</button>
+                                            </form>
                                         </div>
+
                                     </td>
                                 </tr>
                             @endforeach

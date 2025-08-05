@@ -493,4 +493,38 @@ class ReportController extends Controller
 
         return view('layouts.reports.total-sales', ['data' => $data]);
     }
+
+
+    public function deleteRoute($route_code)
+    {
+
+        // Wrap everything in a DB transaction for safety
+        DB::transaction(
+            function () use ($route_code) {
+                // 1. Find the route by its code
+                $route = Route::where('route_code', $route_code)->first();
+
+                if (!$route) {
+                    throw new \Exception('Route not found.');
+                }
+                // 2. Loop through each related RouteShipment
+                foreach ($route->orderShipment as $shipment) {
+                    $order = Order::where('id', $shipment->order_id)->first();
+                    if (!$order) {
+                        throw new \Exception('Order not found.');
+                    }
+                    // 3. Update the product status to 'pending'
+                    $order->update(['status' => 'PENDING']);
+                    // 4. Delete the shipment (optional if cascade deletes are not enabled)
+                    $shipment->delete();
+                }
+
+                // 5. Delete the route
+                $route->delete();
+            }
+        );
+
+
+        return redirect()->back()->with('success', 'Route and related shipments deleted. Order set to pending.');
+    }
 }

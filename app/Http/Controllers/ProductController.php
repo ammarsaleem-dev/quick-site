@@ -38,6 +38,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+
         // return $request;
         $this->validate($request, [
             'name' => 'required|unique:products',
@@ -67,6 +68,7 @@ class ProductController extends Controller
         $product->wsprice = $request->input('wsprice');
         $product->category_id = $request->input('category_id');
         $product->user_type_product = $request->input('user_type_product');
+        $product->isAvailable = $request->input('isAvailable');
         $product->image = $filenameStore;
         $product->save();
         return redirect()->route('products.index')->with('success', 'Successfully!');
@@ -124,6 +126,7 @@ class ProductController extends Controller
         $product->wsprice = $request->input('wsprice');
         $product->user_type_product = $request->input('user_type_product');
         $product->category_id = $request->input('category_id');
+        $product->isAvailable = $request->input('isAvailable');
         $product->save();
         return redirect()->route('products.index')->with('success', 'Successfully!');
     }

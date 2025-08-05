@@ -109,3 +109,9 @@ Route::post('report/delivered-orders', [ReportController::class, 'exportDelivere
  */
 Route::get('/report/total-sales', [ReportController::class, 'getTotalSales'])->name('getTotalSales');
 Route::post('report/total-sales', [ReportController::class, 'exportTotalSales'])->name('exportTotalSales');
+
+
+/**
+ * REPORT delete route
+ */
+Route::delete('/route/{route_code}', [ReportController::class, 'deleteRoute'])->name('deleteRoute');

@@ -18,6 +18,7 @@
                             <th>Price</th>
                             <th>WS Price</th>
                             <th>Description</th>
+                            <th>isAvailable</th>
                             <th>Created At</th>
                             <th>Actions</th>
                         </tr>
@@ -34,6 +35,13 @@
                                 <td>{{ $product->price }}</td>
                                 <td>{{ $product->wsprice }}</td>
                                 <td>{{ $product->description }}</td>
+                                <td>
+                                    @if ($product->isAvailable == '1')
+                                        <span class="badge text-bg-success">متوفر</span>
+                                    @else
+                                        <span class="badge text-bg-danger">غير متوفر</span>
+                                    @endif
+                                </td>
                                 <td>{{ $product->created_at }}</td>
                                 <td>
                                     <a href="{{ route('products.edit', ['product' => $product->id]) }}"
